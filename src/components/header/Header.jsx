@@ -32,12 +32,12 @@ export default async function Component() {
         <Logo className="mr-6 flex flex-row gap-2" />
         <div className="ml-auto flex gap-2">
 
-          <>
+          {/* <>
             <Button className="justify-self-end px-2 py-1 text-xs" variant="outline">
               <Link href="/login">Login</Link>
             </Button>
             <Button className="justify-self-end px-2 py-1 text-xs">Sign Up</Button>
-          </>
+          </> */}
 
           <ThemeSwitcher />
         </div >
