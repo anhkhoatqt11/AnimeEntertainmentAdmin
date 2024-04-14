@@ -23,12 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body>
-        <QueryProvider>
-          <Providers>
-              {children}
-          </Providers>
-        </QueryProvider>
-        <Toaster />
+        <Providers>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
