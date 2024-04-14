@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { formatNumberWithDots } from "@/lib/utils";
 
 export default function AnimeItemCard({ item }) {
   return (
@@ -23,13 +24,7 @@ export default function AnimeItemCard({ item }) {
               className="object-cover h-full w-full transition-transform group-hover:scale-125 duration-300"
             />
           </AspectRatio>
-          <div
-            className="px-2 absolute inset-0 z-20 flex items-end"
-            style={{
-              background:
-                "linear-gradient(to top, #25253bdc 0%, #20202b00 80%)",
-            }}
-          >
+          <div className="px-2 absolute inset-0 z-20 flex items-end bg-gradient-to-t from-[#25253bdc] to-[#20202b00]">
             <div className="flex flex-col w-full">
               <p
                 style={{ maxLines: 1, whiteSpace: "nowrap" }}
@@ -40,15 +35,15 @@ export default function AnimeItemCard({ item }) {
               <div className="flex flex-row justify-between">
                 <p
                   style={{ maxLines: 1, whiteSpace: "nowrap" }}
-                  className="text-[12px] text-slate-300  mb-3 text-ellipsis overflow-hidden"
+                  className="text-[12px] text-white  mb-3 text-ellipsis overflow-hidden font-extralight"
                 >
                   {item.episodes.length} tập
                 </p>
                 <p
                   style={{ maxLines: 1, whiteSpace: "nowrap" }}
-                  className="text-[12px] text-slate-300  mb-3 text-ellipsis overflow-hidden"
+                  className="text-[12px] text-white  mb-3 text-ellipsis overflow-hidden font-extralight"
                 >
-                  133274 lượt xem
+                  {formatNumberWithDots(item.totalViews.toString())} lượt xem
                 </p>
               </div>
             </div>

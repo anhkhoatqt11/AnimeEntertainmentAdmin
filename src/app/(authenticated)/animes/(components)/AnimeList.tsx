@@ -47,14 +47,14 @@ function AnimeList({ props }) {
         </div>
       ) : (
         <>
-          <div className="w-full p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="w-full p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {data?.data.map((item) => (
               <AnimeItemCard item={item} key={`anime-${item.id}`} />
             ))}
           </div>
           <div className="flex justify-center pb-5">
             <Pagination
-              showControls
+            color="danger"
               total={data?.totalPages}
               initialPage={1}
               onChange={(page) => {

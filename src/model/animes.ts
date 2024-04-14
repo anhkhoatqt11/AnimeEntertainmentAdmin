@@ -17,7 +17,9 @@ const animesSchema = new Schema({
 });
 
 type Animes = InferSchemaType<typeof animesSchema>;
-module.exports =
-  mongoose.models.Animes || mongoose.model("Animes", animesSchema);
+// module.exports =
+//   mongoose.models.Animes || mongoose.model("Animes", animesSchema);
 
+export default mongoose.models.Animes ||
+  mongoose.model<Animes>("Animes", animesSchema);
 // export default model<Animes>("Animes", animesSchema);

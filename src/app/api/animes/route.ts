@@ -9,6 +9,26 @@ export async function GET(request: Request) {
   const searchWord = searchParams.get("name");
 
   const animes = await AnimesModel.aggregate([
+    {
+      $lookup: {
+        from: "animeepisodes",
+        localField: "episodes",
+        foreignField: "_id",
+        as: "episodeList",
+      },
+    },
+    {
+      $addFields: {
+        totalViews: {
+          $sum: "$episodeList.views",
+        },
+      },
+    },
+    {
+      $project: {
+        episodeList: 0,
+      },
+    },
     { $skip: (page - 1) * limit },
     { $limit: limit },
   ]);
