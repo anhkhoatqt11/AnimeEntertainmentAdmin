@@ -25,14 +25,7 @@ export default function RootLayout({
       <body>
         <QueryProvider>
           <Providers>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
               {children}
-            </ThemeProvider>
           </Providers>
         </QueryProvider>
         <Toaster />
