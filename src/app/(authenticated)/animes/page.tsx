@@ -1,16 +1,12 @@
-
-import React from 'react'
-import AnimeItemCard from './(components)/AnimeItemCard'
-import AnimeList from './(components)/AnimeList'
+import React, { useState } from "react";
+import { AnimeManagement } from "./AnimeManagement";
 
 const page = () => {
-    return (
-        <div className="w-full h-full">
-            <AnimeList props={undefined}/>
-        </div>
-    )
-}
+  return (
+    <div className="w-full h-full bg-slate-100">
+      <AnimeManagement />
+    </div>
+  );
+};
 
-export default page
-
-
+export default page;

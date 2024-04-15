@@ -8,7 +8,7 @@ import { useState } from "react";
 import AnimeItemCard from "./AnimeItemCard";
 import { Pagination } from "@nextui-org/react";
 
-function AnimeList({ props }) {
+function AnimeList({ props, sort }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
@@ -17,9 +17,10 @@ function AnimeList({ props }) {
   const { data, refetch } = useQuery({
     queryKey: [
       ["animes", currentPage],
-      ["name", "Lớp"],
+      ["name", props],
+      ["sort", sort],
     ],
-    queryFn: () => fetchAllAnimes("", currentPage),
+    queryFn: () => fetchAllAnimes(props, sort, currentPage),
     staleTime: 60 * 1000 * 1,
     keepPreviousData: true,
     onSuccess: () => {
@@ -54,7 +55,8 @@ function AnimeList({ props }) {
           </div>
           <div className="flex justify-center pb-5">
             <Pagination
-            color="danger"
+              color="primary"
+              showControls
               total={data?.totalPages}
               initialPage={1}
               onChange={(page) => {

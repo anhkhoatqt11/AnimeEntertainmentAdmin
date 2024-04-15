@@ -52,7 +52,7 @@ export default async function Layout({
           title="Navigation"
           className="w-full lg:basis-1/4 bg-transparent"
         />
-        <main className="w-full min-h-screen bg-white">{children}</main>
+        <main className="w-full min-h-screen bg-slate-100">{children}</main>
       </div>
       <Footer />
     </div>

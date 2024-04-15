@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import AnimesModel from "../../../model/animes";
+import { removeVietnameseTones } from "@/lib/utils";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -7,8 +8,20 @@ export async function GET(request: Request) {
   const page = parseInt(searchParams?.get("page")); // Retrieves the value of the 'skip' parameter
   const limit = parseInt(searchParams?.get("limit")); // Retrieves the value of the 'limit' parameter
   const searchWord = searchParams.get("name");
-
+  const sort = parseInt(searchParams?.get("sort"));
   const animes = await AnimesModel.aggregate([
+    {
+      $addFields: {
+        result: {
+          $regexMatch: {
+            input: "$movieName",
+            regex: searchWord,
+            options: "i",
+          },
+        },
+      },
+    },
+    { $match: { result: true } },
     {
       $lookup: {
         from: "animeepisodes",
@@ -29,6 +42,7 @@ export async function GET(request: Request) {
         episodeList: 0,
       },
     },
+    { $sort: { _id: sort } },
     { $skip: (page - 1) * limit },
     { $limit: limit },
   ]);

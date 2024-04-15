@@ -229,7 +229,7 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
                           >
                             <motion.span
                               className={classnames(
-                                "text-[14px] flex items-center font-semibold gap-2 w-full h-12 text-slate-11 relative transition ease-in-out duration-200 pl-2",
+                                "text-[14px] flex items-center font-semibold gap-2 w-full h-12 text-white relative transition ease-in-out duration-200 pl-2",
                                 {
                                   "text-black": isCurrentPage,
                                   "hover:text-black": title !== item.title,
