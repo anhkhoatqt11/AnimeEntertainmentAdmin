@@ -7,15 +7,7 @@ import { formatNumberWithDots } from "@/lib/utils";
 export default function AnimeItemCard({ item }) {
   return (
     <div className="flex flex-col overflow-hidden group shadow-lg bg-transparent border border-gray-50">
-      <Link href={`animes/${item?.id}`}>
-        {/* <img
-          alt="Cover"
-          className="aspect-video object-cover w-full"
-          src={item.landspaceImage}
-          width={500}
-          height={560}
-        />
-        <span className="sr-only">View</span> */}
+      <Link href={`animes/${item?._id}`}>
         <div className="group relative overflow-hidden">
           <AspectRatio ratio={16 / 9}>
             <img

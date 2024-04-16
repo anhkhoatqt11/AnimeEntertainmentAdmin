@@ -51,3 +51,50 @@ export function removeVietnameseTones(str) {
   );
   return str;
 }
+
+export function formatBytes(
+  bytes: number,
+  decimals = 0,
+  sizeType: "accurate" | "normal" = "normal"
+) {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const accurateSizes = ["Bytes", "KiB", "MiB", "GiB", "TiB"];
+  if (bytes === 0) return "0 Byte";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
+    sizeType === "accurate" ? accurateSizes[i] ?? "Bytest" : sizes[i] ?? "Bytes"
+  }`;
+}
+export function isArrayOfFile(files: unknown): files is File[] {
+  const isArray = Array.isArray(files);
+  if (!isArray) return false;
+  return files.every((file) => file instanceof File);
+}
+export const parseJSON = (str: string, out = []) => {
+  try {
+    const val = JSON.parse(str);
+    return val ?? out;
+  } catch (error) {
+    return out;
+  }
+};
+
+export function formatNumberWithCommas(numStr) {
+  // Remove all non-numeric characters (except for decimal point)
+  const sanitizedStr = numStr.replace(/[^0-9.]/g, "");
+
+  // Convert sanitized string to an array of characters
+  // eslint-disable-next-line prefer-const
+  let parts = sanitizedStr.split(".");
+
+  // Add commas for thousands, millions, etc.
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // Join the array back into a string
+  return parts.join(".");
+}
+
+export const getImageKey = (url) => {
+  const filename = url.split("/").pop();
+  return filename;
+};
