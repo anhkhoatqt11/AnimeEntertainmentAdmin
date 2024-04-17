@@ -10,6 +10,7 @@ import DialogCustom from "@/components/ui/dialogCustom";
 import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import {
+  CheckboxGroup,
   Input,
   RadioGroup,
   Select,
@@ -20,8 +21,10 @@ import { url } from "inspector";
 import { Zoom } from "@/components/ui/zoom-image";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
+import { useGenres } from "@/hooks/useGenres";
+import { CustomCheckbox } from "@/components/ui/CustomCheckBox";
 
-function AnimeInformation({}) {
+function AnimeInformation({ props }) {
   const ageList = [
     "10+",
     "11+",
@@ -33,7 +36,18 @@ function AnimeInformation({}) {
     "17+",
     "18+",
   ];
-  const [age, setAge] = React.useState(new Set([]));
+  const [genreList, setGenreList] = useState([]);
+  const { fetchAllGenres } = useGenres();
+  useEffect(() => {
+    const getAllGenres = async () => {
+      props.setIsLoading(true);
+      await fetchAllGenres().then((res) => {
+        setGenreList(res);
+        props.setIsLoading(false);
+      });
+    };
+    getAllGenres();
+  }, []);
   return (
     <div className="grid-cols-1 grid gap-4 mb-6">
       <h1 className="font-semibold text-xl">Thông tin bộ phim</h1>
@@ -42,8 +56,12 @@ function AnimeInformation({}) {
           <div className="flex flex-col gap-3 w-[70%]">
             <div className=" w-full h-41 border-1 rounded">
               <img
-                src={""}
-                alt={"props.eventPosterFile[0]?.name"}
+                src={
+                  props.landspaceImage[0]?.preview ||
+                  props.landspaceImage[0]?.url ||
+                  props.defaultLandspace
+                }
+                alt={props.landspaceImage[0]?.name}
                 className={`h-[360px] w-full rounded-md object-cover object-center`}
               />
             </div>
@@ -51,25 +69,21 @@ function AnimeInformation({}) {
               name="images"
               maxFiles={1}
               maxSize={1024 * 1024 * 4}
-              //   files={props.eventPosterFile}
-              //   setFiles={props.setEventPosterFile}
+              files={props.landspaceImage}
+              setFiles={props.setLandspaceImage}
               disabled={false}
               className={`p-0 px-6`}
-              files={null}
-              setFiles={function (
-                value: React.SetStateAction<
-                  (FileWithPath & { preview: string })[] | null
-                >
-              ): void {
-                throw new Error("Function not implemented.");
-              }}
             />
           </div>
           <div className="flex flex-col gap-3 w-[30%]">
             <div className=" w-full h-41 border-1 rounded">
               <img
-                src={""}
-                alt={"props.eventPosterFile[0]?.name"}
+                src={
+                  props.coverImage[0]?.preview ||
+                  props.coverImage[0]?.url ||
+                  props.defaultCover
+                }
+                alt={props.coverImage[0]?.name}
                 className={`h-[360px] w-full rounded-md object-cover object-center`}
               />
             </div>
@@ -77,18 +91,10 @@ function AnimeInformation({}) {
               name="images"
               maxFiles={1}
               maxSize={1024 * 1024 * 4}
-              //   files={props.eventPosterFile}
-              //   setFiles={props.setEventPosterFile}
+              files={props.coverImage}
+              setFiles={props.setCoverImage}
               disabled={false}
               className={`p-0 px-6 `}
-              files={null}
-              setFiles={function (
-                value: React.SetStateAction<
-                  (FileWithPath & { preview: string })[] | null
-                >
-              ): void {
-                throw new Error("Function not implemented.");
-              }}
             />
           </div>
         </div>
@@ -104,10 +110,10 @@ function AnimeInformation({}) {
               radius="sm"
               variant="bordered"
               size="md"
-              //   value={props.eventName}
+              value={props.movieName}
               placeholder="Nhập tên bộ phim"
               onChange={(e) => {
-                // props.setEventName(e.target.value);
+                props.setMovieName(e.target.value);
               }}
             />
           </div>
@@ -124,10 +130,10 @@ function AnimeInformation({}) {
               radius="sm"
               variant="bordered"
               size="md"
-              //   value={props.eventName}
+              value={props.description}
               placeholder="Nhập mô tả phim"
               onChange={(e) => {
-                // props.setEventName(e.target.value);
+                props.setDescription(e.target.value);
               }}
             />
           </div>
@@ -138,18 +144,18 @@ function AnimeInformation({}) {
             Thể loại: <span className="text-red-500">*</span>
           </Label>
           <div className="flex flex-col gap-1 w-full">
-            <RadioGroup
+            <CheckboxGroup
               label="Chọn loại sự kiện"
               orientation="horizontal"
-              //   value={props.typeEventSelected}
-              //   onValueChange={props.setTypeEventSelected}
+              value={props.genreSelected}
+              onChange={props.setGenreSelected}
             >
-              {/* {topicList.map((item) => (
-                <CustomRadio key={item?.id} value={item?.id}>
-                  {item?.name}
-                </CustomRadio>
-              ))} */}
-            </RadioGroup>
+              {genreList.map((item) => (
+                <CustomCheckbox key={item?._id} value={item?._id}>
+                  {item?.genreName}
+                </CustomCheckbox>
+              ))}
+            </CheckboxGroup>
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-3">
@@ -162,10 +168,10 @@ function AnimeInformation({}) {
               radius="sm"
               variant="bordered"
               size="md"
-              //   value={props.eventName}
+              value={props.publisher}
               placeholder="Nhập tên nhà sản xuất"
               onChange={(e) => {
-                // props.setEventName(e.target.value);
+                props.setPublisher(e.target.value);
               }}
             />
           </div>
@@ -178,10 +184,10 @@ function AnimeInformation({}) {
               radius="sm"
               variant="bordered"
               size="md"
-              //   value={props.eventName}
+              value={props.weeklyTime}
               placeholder="Nhập khung giờ phát sóng tập mới"
               onChange={(e) => {
-                // props.setEventName(e.target.value);
+                props.setWeeklyTime(e.target.value);
               }}
             />
           </div>
@@ -193,10 +199,10 @@ function AnimeInformation({}) {
               variant={"bordered"}
               label="Chọn độ tuổi"
               defaultSelectedKeys={["10+"]}
-              selectedKeys={age}
+              selectedKeys={props.ageFor}
               radius="sm"
               className="w-full md:w-[150px]"
-              onSelectionChange={setAge}
+              onSelectionChange={props.setAgeFor}
             >
               {ageList.map((item) => (
                 <SelectItem key={item} value={item}>

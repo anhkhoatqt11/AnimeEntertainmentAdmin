@@ -22,7 +22,7 @@ import { FaFolder, FaPlusCircle, FaUser } from "react-icons/fa";
 
 export default async function Component() {
   return (
-    <div className="bg-[#3A4652] px-3  py-3 shadow-md hidden lg:block">
+    <div className="bg-[#3A4652] px-3 shadow-md hidden lg:block">
       <div className="flex h-20 w-full justify-between bg-[#3A4652] shrink-0 items-center ">
         <Logo />
         <div className="flex gap-2">

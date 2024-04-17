@@ -7,7 +7,6 @@ import { FileDialog } from "@/components/ui/FileDialog";
 import { ImageList } from "@/components/ui/ImageList";
 import { Button } from "@/components/ui/button";
 import DialogCustom from "@/components/ui/dialogCustom";
-import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import {
   Input,
@@ -20,20 +19,43 @@ import { url } from "inspector";
 import { Zoom } from "@/components/ui/zoom-image";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
+import { toast } from "react-hot-toast";
+type AnimeEp = {
+  episodeName: string;
+  coverImage: string;
+  content: string;
+  adLink: string;
+  advertisement: string;
+};
 
-function AnimeEpisodeInformation({}) {
-  const ageList = [
-    "10+",
-    "11+",
-    "12+",
-    "13+",
-    "14+",
-    "15+",
-    "16+",
-    "17+",
-    "18+",
-  ];
-  const [age, setAge] = React.useState(new Set([]));
+function AnimeEpisodeInformation({ props }) {
+  const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
+  const [coverImage, setCoverImage] = React.useState([]);
+  const [episodeName, setEpisodeName] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+
+  const addEpisode = () => {
+    toast.success("hello");
+    // if (coverImage.length <= 0) {
+    //   toast.error("Tập phim phải có 1 hình bìa");
+    //   return;
+    // }
+    // if (!episodeName || !videoUrl) {
+    //   toast.error("Vui lòng nhập tất cả thông tin");
+    //   return;
+    // }
+    // setEpisodeList([
+    //   ...episodeList,
+    //   {
+    //     episodeName: episodeName,
+    //     coverImage: coverImage[0]?.preview,
+    //     content: videoUrl,
+    //     adLink: "undefined",
+    //     advertisement: "undefined",
+    //   },
+    // ]);
+    // console.log(episodeList);
+  };
   return (
     <div className="grid-cols-1 grid gap-4 mb-6 mt-5">
       <h1 className="font-semibold text-xl">Danh sách tập phim</h1>
@@ -42,8 +64,8 @@ function AnimeEpisodeInformation({}) {
           <div className="flex flex-col gap-3 w-[70%]">
             <div className=" w-full h-41 border-1 rounded">
               <img
-                src={""}
-                alt={"props.eventPosterFile[0]?.name"}
+                src={coverImage[0]?.preview || coverImage[0]?.url}
+                alt={coverImage[0]?.name}
                 className={`h-[360px] w-full rounded-md object-cover object-center`}
               />
             </div>
@@ -51,18 +73,10 @@ function AnimeEpisodeInformation({}) {
               name="images"
               maxFiles={1}
               maxSize={1024 * 1024 * 4}
-              //   files={props.eventPosterFile}
-              //   setFiles={props.setEventPosterFile}
+              files={coverImage}
+              setFiles={setCoverImage}
               disabled={false}
               className={`p-0 px-6`}
-              files={null}
-              setFiles={function (
-                value: React.SetStateAction<
-                  (FileWithPath & { preview: string })[] | null
-                >
-              ): void {
-                throw new Error("Function not implemented.");
-              }}
             />
             {/* thong tin khac */}
             <div className="gap-6 mt-6">
@@ -76,10 +90,10 @@ function AnimeEpisodeInformation({}) {
                   radius="sm"
                   variant="bordered"
                   size="md"
-                  //   value={props.eventName}
+                  value={episodeName}
                   placeholder="Nhập tên tập phim"
                   onChange={(e) => {
-                    // props.setEventName(e.target.value);
+                    setEpisodeName(e.target.value);
                   }}
                 />
               </div>
@@ -96,22 +110,31 @@ function AnimeEpisodeInformation({}) {
                   radius="sm"
                   variant="bordered"
                   size="md"
-                  //   value={props.eventName}
+                  value={videoUrl}
                   placeholder="Nhập nội dụng"
                   onChange={(e) => {
-                    // props.setEventName(e.target.value);
+                    setVideoUrl(e.target.value);
                   }}
                 />
               </div>
             </div>
+            <Label className="font-bold text-sm">
+              Quảng cáo: <span className="text-red-500">*</span>
+            </Label>
+            <Button
+              className={`w-full bg-[#3BE1AA] text-black hover:bg-[#2DD196] font-semibold py-6 text-base`}
+              onClick={() => {
+                addEpisode();
+              }}
+            >
+              Thêm tập phim
+            </Button>
           </div>
           <div className="flex flex-col gap-3 w-[30%]">
             <div className=" w-full h-full border-1 rounded">
-              <p>hello</p>
-              <p>hello</p>
-              <p>hello</p>
-              <p>hello</p>
-              <p>hello</p>
+              {episodeList.map((item) => (
+                <img src={item.coverImage} height={120} width={100} />
+              ))}
             </div>
           </div>
         </div>
