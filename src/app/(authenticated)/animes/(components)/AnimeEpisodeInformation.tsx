@@ -19,13 +19,15 @@ import { url } from "inspector";
 import { Zoom } from "@/components/ui/zoom-image";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
-import { toast } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { EpisodeItemCard } from "./EpisodeItemCard";
 type AnimeEp = {
   episodeName: string;
   coverImage: string;
   content: string;
   adLink: string;
   advertisement: string;
+  views: number;
 };
 
 function AnimeEpisodeInformation({ props }) {
@@ -35,33 +37,38 @@ function AnimeEpisodeInformation({ props }) {
   const [videoUrl, setVideoUrl] = useState("");
 
   const addEpisode = () => {
-    toast.success("hello");
-    // if (coverImage.length <= 0) {
-    //   toast.error("Tập phim phải có 1 hình bìa");
-    //   return;
-    // }
-    // if (!episodeName || !videoUrl) {
-    //   toast.error("Vui lòng nhập tất cả thông tin");
-    //   return;
-    // }
-    // setEpisodeList([
-    //   ...episodeList,
-    //   {
-    //     episodeName: episodeName,
-    //     coverImage: coverImage[0]?.preview,
-    //     content: videoUrl,
-    //     adLink: "undefined",
-    //     advertisement: "undefined",
-    //   },
-    // ]);
-    // console.log(episodeList);
+    if (coverImage.length <= 0) {
+      toast.error("Tập phim phải có 1 hình bìa");
+      return;
+    }
+    if (!episodeName || !videoUrl) {
+      toast.error("Vui lòng nhập tất cả thông tin");
+      return;
+    }
+    setEpisodeList([
+      ...episodeList,
+      {
+        episodeName: episodeName,
+        coverImage: coverImage[0]?.preview,
+        content: videoUrl,
+        adLink: "undefined",
+        advertisement: "undefined",
+        views: 0,
+      },
+    ]);
+    setCoverImage([]);
+    setEpisodeName("");
+    setVideoUrl("");
+    toast.success("Đã thêm tập mới");
+    return;
   };
   return (
     <div className="grid-cols-1 grid gap-4 mb-6 mt-5">
+      <Toaster />
       <h1 className="font-semibold text-xl">Danh sách tập phim</h1>
       <div className="flex flex-col gap-3 w-full rounded bg-white p-4">
-        <div className="flex flex-row gap-3">
-          <div className="flex flex-col gap-3 w-[70%]">
+        <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex flex-col gap-3 w-full md:w-[70%]">
             <div className=" w-full h-41 border-1 rounded">
               <img
                 src={coverImage[0]?.preview || coverImage[0]?.url}
@@ -130,10 +137,15 @@ function AnimeEpisodeInformation({ props }) {
               Thêm tập phim
             </Button>
           </div>
-          <div className="flex flex-col gap-3 w-[30%]">
-            <div className=" w-full h-full border-1 rounded">
+          <div className="flex flex-col gap-3 w-full md:w-[30%]">
+            <div className=" w-full h-full border-1 rounded overflow-hidden">
               {episodeList.map((item) => (
-                <img src={item.coverImage} height={120} width={100} />
+                <EpisodeItemCard
+                  item={item}
+                  setEpisodeName={setEpisodeName}
+                  setCoverImage={setCoverImage}
+                  setVideoUrl={setVideoUrl}
+                />
               ))}
             </div>
           </div>
