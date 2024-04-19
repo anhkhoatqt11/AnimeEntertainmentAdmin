@@ -17,8 +17,18 @@ export const useAnimes = () => {
     return res;
   };
 
+  const createNewAnime = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/animes/animes-detail/add",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
+
   return {
     fetchAllAnimes,
     fetchAnimeById,
+    createNewAnime,
   };
 };

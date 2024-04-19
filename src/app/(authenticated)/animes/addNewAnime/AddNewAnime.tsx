@@ -9,8 +9,6 @@ import toast from "react-hot-toast";
 // import TicketInformation, {
 //   TicketProps,
 // } from "../../(components)/(event)/(add)/TicketInformation";
-import { generateReactHelpers } from "@uploadthing/react/hooks";
-// import { OurFileRouter } from "@/app/api/uploadthing/core";
 // import { useTicketOrganizer } from "@/hooks/useTicketOrganizer";
 import {
   Modal,
@@ -23,7 +21,20 @@ import {
 import { useRouter } from "next/navigation";
 import AnimeInformation from "../(components)/AnimeInformation";
 import AnimeEpisodeInformation from "../(components)/AnimeEpisodeInformation";
-// const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+import { generateReactHelpers } from "@uploadthing/react/hooks";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
+import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
+import { useAnimes } from "@/hooks/useAnimes";
+const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+
+type AnimeEp = {
+  episodeName: string;
+  coverImage: string;
+  content: string;
+  adLink: string;
+  advertisement: string;
+  views: number;
+};
 
 export function AddNewAnime() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -35,62 +46,70 @@ export function AddNewAnime() {
   const [genreSelected, setGenreSelected] = React.useState([]);
   const [publisher, setPublisher] = React.useState("");
   const [weeklyTime, setWeeklyTime] = React.useState("");
-  const [ageFor, setAgeFor] = React.useState(new Set([]));
+  const [ageFor, setAgeFor] = React.useState(new Set(["10+"]));
+  const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
+  const [episodeIdList, setEpisodeIdList] = useState([]);
+  const { startUpload } = useUploadThing("imageUploader");
+  const { createNewEpisode } = useAnimeEpisodes();
+  const { createNewAnime } = useAnimes();
   //new ------------------------------
-  //   const { startUpload } = useUploadThing("imageUploader");
   const [startIndex, setStartIndex] = useState(1);
   const [eventId, setEventId] = useState(-1);
-  //   const [ticketEvent, setTicketEvent] = useState<TicketProps[]>([]);
-  //   const [ticketDropEvent, setTicketDropEvent] = useState<TicketProps[]>([]);
   const [canSubmit, setCanSubmit] = useState(true);
-  //   const { createNewEvent } = useEventOrganizer();
-  //   const { createNewTicket } = useTicketOrganizer();
   const route = useRouter();
 
-  //   const onSubmit = () => {
-  //     if (eventPosterFile.length <= 0) {
-  //       toast.error("Sự kiện bắt buộc phải có ảnh bìa");
-  //       return;
-  //     }
-  //     if (!addressValue || !eventName || !typeEventSelected || !contentValue) {
-  //       toast.error("Vui lòng nhập tất cả thông tin");
-  //       return;
-  //     }
-  //     if (startDate.getTime() >= endDate.getTime()) {
-  //       toast.error("Ngày bắt đầu phải nằm sau ngày kết thúc sự kiện");
-  //       return;
-  //     }
-  //     if (!canSubmit) {
-  //       toast.error("Đang ở chế độ chỉnh sửa thông tin vé, vui lòng hoàn tất");
-  //       return;
-  //     }
-  //     ticketEvent.map((item, index) => {
-  //       if (
-  //         !item.name ||
-  //         !item.moTa ||
-  //         !item.gia ||
-  //         !item.soLuong ||
-  //         !item.soLuongToiDa ||
-  //         !item.soLuongToiThieu ||
-  //         !checkPhoneNumber(item.gia.toString()) ||
-  //         !checkPhoneNumber(item.soLuong.toString()) ||
-  //         !checkPhoneNumber(item.soLuongToiDa.toString()) ||
-  //         !checkPhoneNumber(item.soLuongToiThieu.toString()) ||
-  //         item.ngayBan.getTime() >= item.ngayKetThuc.getTime()
-  //       ) {
-  //         toast.error(
-  //           `Vé thứ ${index + 1} đang bị lỗi dữ liệu, vui lòng kiểm tra lại !`
-  //         );
-  //         return;
-  //       } else if (index === ticketEvent.length - 1) {
-  //         processCreationEvent();
-  //         return;
-  //       }
-  //     });
-  //     if (ticketEvent.length === 0) {
-  //       processCreationEvent();
-  //     }
-  //   };
+  const onSubmit = async () => {
+    // if (landspaceImage.length <= 0 || coverImage.length <= 0) {
+    //   toast.error("Phim bắt buộc phải có một ảnh bìa ngang và một ảnh bìa dọc");
+    //   return;
+    // }
+    // if (!movieName || !description || !publisher || !weeklyTime) {
+    //   toast.error("Vui lòng nhập tất cả thông tin");
+    //   return;
+    // }
+    // if (genreSelected.length <= 0 && genreSelected.length > 3) {
+    //   toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
+    //   return;
+    // }
+
+    episodeList.map((item, index) => {
+      const data = {
+        coverImage: "{ type: String }",
+        episodeName: "{ type: String }",
+        totalTime: 0,
+        publicTime: new Date(),
+        // *
+        content: "{ type: String }",
+        comments: [],
+        likes: [], // list of user liked
+        views: 0,
+        advertising: "{ type: String }",
+        adLink: "{ type: String }",
+      };
+      createNewEpisode(data).then((res) => {
+        episodeIdList.push(res?._id);
+        if (index === episodeList.length - 1) {
+          const data = {
+            coverImage: "{ type: String }",
+            landspaceImage: "{ type: String }",
+            movieName: "{ type: String }",
+            genres: [],
+            publishTime: "{ type: String }",
+            ageFor: "{ type: String }",
+            publisher: "{ type: String }",
+            description: "{ type: String }",
+            episodes: episodeIdList,
+          };
+          createNewAnime(data).then((res) => {
+            toast.success("da xong");
+          });
+        }
+      });
+    });
+    // if (ticketEvent.length === 0) {
+    //   processCreationEvent();
+    // }
+  };
 
   //   const processCreationEvent = async () => {
   //     setIsLoading(true);
@@ -164,7 +183,7 @@ export function AddNewAnime() {
                   variant="light"
                   onPress={() => {
                     onClose();
-                    // onSubmit();
+                    onSubmit();
                   }}
                 >
                   Tạo sự kiện
@@ -201,10 +220,8 @@ export function AddNewAnime() {
         />
         <AnimeEpisodeInformation
           props={{
-            canSubmit,
-            setCanSubmit,
-            eventId,
-            startIndex,
+            episodeList,
+            setEpisodeList,
           }}
         />
         <Button

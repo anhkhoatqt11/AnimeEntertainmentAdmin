@@ -46,7 +46,40 @@ export async function GET(request: Request) {
     { $skip: (page - 1) * limit },
     { $limit: limit },
   ]);
-  const countItem = await AnimesModel.countDocuments();
+  const countItem = await AnimesModel.aggregate([
+    {
+      $addFields: {
+        result: {
+          $regexMatch: {
+            input: "$movieName",
+            regex: searchWord,
+            options: "i",
+          },
+        },
+      },
+    },
+    { $match: { result: true } },
+    {
+      $lookup: {
+        from: "animeepisodes",
+        localField: "episodes",
+        foreignField: "_id",
+        as: "episodeList",
+      },
+    },
+    {
+      $addFields: {
+        totalViews: {
+          $sum: "$episodeList.views",
+        },
+      },
+    },
+    {
+      $project: {
+        episodeList: 0,
+      },
+    },
+  ]);
 
   const data = {
     data: animes,

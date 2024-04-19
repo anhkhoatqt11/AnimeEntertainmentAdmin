@@ -21,17 +21,8 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
 import toast, { Toaster } from "react-hot-toast";
 import { EpisodeItemCard } from "./EpisodeItemCard";
-type AnimeEp = {
-  episodeName: string;
-  coverImage: string;
-  content: string;
-  adLink: string;
-  advertisement: string;
-  views: number;
-};
 
 function AnimeEpisodeInformation({ props }) {
-  const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
   const [coverImage, setCoverImage] = React.useState([]);
   const [episodeName, setEpisodeName] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -45,8 +36,8 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng nhập tất cả thông tin");
       return;
     }
-    setEpisodeList([
-      ...episodeList,
+    props.setEpisodeList([
+      ...props.episodeList,
       {
         episodeName: episodeName,
         coverImage: coverImage[0]?.preview,
@@ -139,7 +130,7 @@ function AnimeEpisodeInformation({ props }) {
           </div>
           <div className="flex flex-col gap-3 w-full md:w-[30%]">
             <div className=" w-full h-full border-1 rounded overflow-hidden">
-              {episodeList.map((item) => (
+              {props.episodeList.map((item) => (
                 <EpisodeItemCard
                   item={item}
                   setEpisodeName={setEpisodeName}
