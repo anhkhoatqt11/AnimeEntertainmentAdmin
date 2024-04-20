@@ -10,8 +10,8 @@ const checkbox = tv({
   variants: {
     isSelected: {
       true: {
-        base: `border-[#3BE1AA] bg-[#3BE1AA] hover:bg-emerald-500 hover:border-[#3BE1AA] text-white`,
-        content: `text-primary-foreground pl-1`,
+        base: `border-[#DA5EF0] border-3 bg-gradient-to-r from-[#A958FE] to-[#DA5EF0]  text-white`,
+        content: `text-primary-foreground pl-1 font-medium`,
       },
     },
     isFocusVisible: {

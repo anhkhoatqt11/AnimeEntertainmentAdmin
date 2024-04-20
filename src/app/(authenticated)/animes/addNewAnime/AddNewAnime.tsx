@@ -67,48 +67,44 @@ export function AddNewAnime() {
     //   toast.error("Vui lòng nhập tất cả thông tin");
     //   return;
     // }
-    // if (genreSelected.length <= 0 && genreSelected.length > 3) {
-    //   toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
-    //   return;
-    // }
-
-    episodeList.map((item, index) => {
-      const data = {
-        coverImage: "{ type: String }",
-        episodeName: "{ type: String }",
-        totalTime: 0,
-        publicTime: new Date(),
-        // *
-        content: "{ type: String }",
-        comments: [],
-        likes: [], // list of user liked
-        views: 0,
-        advertising: "{ type: String }",
-        adLink: "{ type: String }",
-      };
-      createNewEpisode(data).then((res) => {
-        episodeIdList.push(res?._id);
-        if (index === episodeList.length - 1) {
-          const data = {
-            coverImage: "{ type: String }",
-            landspaceImage: "{ type: String }",
-            movieName: "{ type: String }",
-            genres: [],
-            publishTime: "{ type: String }",
-            ageFor: "{ type: String }",
-            publisher: "{ type: String }",
-            description: "{ type: String }",
-            episodes: episodeIdList,
-          };
-          createNewAnime(data).then((res) => {
-            toast.success("da xong");
-          });
-        }
-      });
-    });
-    // if (ticketEvent.length === 0) {
-    //   processCreationEvent();
-    // }
+    if (genreSelected.length <= 0 || genreSelected.length > 3) {
+      toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
+      return;
+    }
+    // episodeList.map((item, index) => {
+    //   const data = {
+    //     coverImage: "{ type: String }",
+    //     episodeName: "{ type: String }",
+    //     totalTime: 0,
+    //     publicTime: new Date(),
+    //     // *
+    //     content: "{ type: String }",
+    //     comments: [],
+    //     likes: [], // list of user liked
+    //     views: 0,
+    //     advertising: "{ type: String }",
+    //     adLink: "{ type: String }",
+    //   };
+    //   createNewEpisode(data).then((res) => {
+    //     episodeIdList.push(res?._id);
+    //     if (index === episodeList.length - 1) {
+    //       const data = {
+    //         coverImage: "{ type: String }",
+    //         landspaceImage: "{ type: String }",
+    //         movieName: "{ type: String }",
+    //         genres: genreSelected,
+    //         publishTime: "{ type: String }",
+    //         ageFor: "{ type: String }",
+    //         publisher: "{ type: String }",
+    //         description: "{ type: String }",
+    //         episodes: episodeIdList,
+    //       };
+    //       createNewAnime(data).then((res) => {
+    //         toast.success("da xong");
+    //       });
+    //     }
+    //   });
+    // });
   };
 
   //   const processCreationEvent = async () => {
@@ -225,7 +221,7 @@ export function AddNewAnime() {
           }}
         />
         <Button
-          className={`w-full bg-[#3BE1AA] text-black hover:bg-[#2DD196] font-semibold py-6 text-base`}
+          className={`w-full rounded-md m-0 p-0 font-semibold text-base shadow-md bg-gradient-to-r from-[#A958FE] to-[#DA5EF0] transition ease-in-out hover:scale-[1.01] text-white py-6`}
           radius="sm"
           onClick={onOpen}
         >

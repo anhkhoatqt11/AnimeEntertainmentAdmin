@@ -4,14 +4,18 @@ import mongoose from "mongoose";
 export async function POST(req: Request) {
   const body = await req.json();
   const idList: mongoose.Types.ObjectId[] = [];
+  const genreList: mongoose.Types.ObjectId[] = [];
   body.episodes.map((item) => {
     idList.push(new mongoose.Types.ObjectId(item));
+  });
+  body.genres.map((item) => {
+    genreList.push(new mongoose.Types.ObjectId(item));
   });
   const episode = await AnimesModel.create({
     coverImage: body.coverImage,
     landspaceImage: body.landspaceImage,
     movieName: body.movieName,
-    genres: [],
+    genres: genreList,
     publishTime: body.publishTime,
     ageFor: body.ageFor,
     publisher: body.publisher,
