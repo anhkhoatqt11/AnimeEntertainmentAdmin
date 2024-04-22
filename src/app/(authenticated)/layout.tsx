@@ -42,6 +42,11 @@ export default async function Layout({
       value: "challenge",
       icon: <LucideGamepad size={15} className="mr-2" />,
     },
+    {
+      title: "Quảng cáo",
+      value: "advertisement",
+      icon: <Book size={15} className="mr-2" />,
+    },
   ];
   return (
     <div className="bg-[#3A4652]">

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-
+import numeral from "numeral";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -98,3 +98,14 @@ export const getImageKey = (url) => {
   const filename = url.split("/").pop();
   return filename;
 };
+
+export function currencyFormat(num) {
+  return `${numeral(num).format("0,0")} VND`;
+}
+
+export function checkNumber(str: string) {
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] < "0" || str[i] > "9") return false;
+  }
+  return true;
+}
