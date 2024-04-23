@@ -14,8 +14,7 @@ const animeEpisodesSchema = new Schema({
   comments: { type: Array },
   likes: { type: Array }, // list of user liked
   views: { type: Number },
-  advertising: { type: String },
-  adLink: { type: String },
+  advertisement: { type: mongoose.Types.ObjectId },
 });
 
 type AnimeEpisodes = InferSchemaType<typeof animeEpisodesSchema>;

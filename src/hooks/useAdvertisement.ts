@@ -26,9 +26,19 @@ export const useAdvertisement = () => {
     return res;
   };
 
+  const test = async () => {
+    const res = await postRequest({
+      endPoint: "/api/test",
+      isFormData: false,
+      formData: { data: "" },
+    });
+    return res;
+  };
+
   return {
     fetchAllAdvertisement,
     createAdvertisement,
     editAdvertisement,
+    test,
   };
 };

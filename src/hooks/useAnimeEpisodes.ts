@@ -10,7 +10,15 @@ export const useAnimeEpisodes = () => {
     return res;
   };
 
+  const fetchAllAdvertisements = async () => {
+    const res = await getRequest({
+      endPoint: `/api/animes/advertisement`,
+    });
+    return res;
+  };
+
   return {
     createNewEpisode,
+    fetchAllAdvertisements,
   };
 };

@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 // import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { FileDialog } from "@/components/ui/FileDialog";
-import { ImageList } from "@/components/ui/ImageList";
 import { Button } from "@/components/ui/button";
-import DialogCustom from "@/components/ui/dialogCustom";
 import { Label } from "@/components/ui/label";
 import {
   Input,
@@ -21,33 +19,50 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
 import toast, { Toaster } from "react-hot-toast";
 import { EpisodeItemCard } from "./EpisodeItemCard";
+import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 
 function AnimeEpisodeInformation({ props }) {
   const [coverImage, setCoverImage] = React.useState([]);
   const [episodeName, setEpisodeName] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [editMode, setEditMode] = useState(-1);
+  const [adList, setAdList] = useState();
+  const [adPick, setAdPick] = React.useState(new Set([]));
+  const { fetchAllAdvertisements } = useAnimeEpisodes();
+
+  useEffect(() => {
+    const fetchAdList = async () => {
+      await fetchAllAdvertisements().then((res) => {
+        setAdList(res);
+      });
+    };
+    fetchAdList();
+  }, []);
 
   const addEpisode = () => {
-    if (coverImage.length <= 0) {
-      toast.error("Tập phim phải có 1 hình bìa");
+    // if (coverImage.length <= 0) {
+    //   toast.error("Tập phim phải có 1 hình bìa");
+    //   return;
+    // }
+    // if (!episodeName || !videoUrl) {
+    //   toast.error("Vui lòng nhập tất cả thông tin");
+    //   return;
+    // }
+    if (adPick.values.toString() === "") {
+      toast.error("Vui lòng chọn quảng cáo");
       return;
     }
-    if (!episodeName || !videoUrl) {
-      toast.error("Vui lòng nhập tất cả thông tin");
-      return;
-    }
-    props.setEpisodeList([
-      ...props.episodeList,
-      {
-        episodeName: episodeName,
-        coverImage: coverImage[0]?.preview,
-        content: videoUrl,
-        adLink: "undefined",
-        advertisement: "undefined",
-        views: 0,
-      },
-    ]);
+    console.log(adPick.currentKey);
+    // props.setEpisodeList([
+    //   ...props.episodeList,
+    //   {
+    //     episodeName: episodeName,
+    //     coverImage: coverImage[0]?.preview,
+    //     content: videoUrl,
+    //     advertisement: "undefined",
+    //     views: 0,
+    //   },
+    // ]);
     setCoverImage([]);
     setEpisodeName("");
     setVideoUrl("");
@@ -129,6 +144,72 @@ function AnimeEpisodeInformation({ props }) {
             <Label className="font-bold text-sm">
               Quảng cáo: <span className="text-red-500">*</span>
             </Label>
+            {!adList ? (
+              <p>Loading</p>
+            ) : (
+              <Select
+                items={adList}
+                label="Quảng cáo"
+                radius="sm"
+                variant="bordered"
+                selectedKeys={adPick}
+                onSelectionChange={setAdPick}
+                classNames={{
+                  label: "group-data-[filled=true]:-translate-y-5",
+                  trigger: "min-h-20",
+                  listboxWrapper: "max-h-[400px]",
+                }}
+                listboxProps={{
+                  itemClasses: {
+                    base: [
+                      "rounded-md",
+                      "text-default-500",
+                      "transition-opacity",
+                      "data-[hover=true]:text-foreground",
+                      "data-[hover=true]:bg-default-100",
+                      "dark:data-[hover=true]:bg-default-50",
+                      "data-[selectable=true]:focus:bg-default-50",
+                      "data-[pressed=true]:opacity-70",
+                      "data-[focus-visible=true]:ring-default-500",
+                    ],
+                  },
+                }}
+                popoverProps={{
+                  classNames: {
+                    base: "before:bg-default-200",
+                    content: "p-0 border-small border-divider bg-background",
+                  },
+                }}
+                renderValue={(items) => {
+                  return items.map((item) => (
+                    <div className="flex gap-2 items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-small">{item?.data?._id}</span>
+                        <span className="text-tiny text-default-400">
+                          {item?.data?.representative}
+                        </span>
+                      </div>
+                    </div>
+                  ));
+                }}
+              >
+                {(ad) => (
+                  <SelectItem key={ad?._id} textValue={ad?._id}>
+                    <div className="flex gap-2 items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-small">{ad?._id}</span>
+                        <span className="text-tiny text-default-400">
+                          {ad?.representative}
+                        </span>
+                      </div>
+                      <div className="text-emerald-500 font-medium">
+                        {ad?.amount - ad?.usedCount} lượt
+                      </div>
+                    </div>
+                  </SelectItem>
+                )}
+              </Select>
+            )}
             {editMode === -1 ? (
               <Button
                 className={`w-full bg-blue-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}

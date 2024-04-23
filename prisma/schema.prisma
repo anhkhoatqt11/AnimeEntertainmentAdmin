@@ -88,8 +88,7 @@ model animealbums {
 model animeepisodes {
   id          String                  @id @default(auto()) @map("_id") @db.ObjectId
   v           Int?                    @map("__v")
-  adLink      String
-  advertising String
+  advertisementId          String                  @db.ObjectId
   comments    AnimeepisodesComments[]
   content     String
   coverImage  String
