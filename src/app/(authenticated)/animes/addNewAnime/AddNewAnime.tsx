@@ -25,6 +25,7 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { useAnimes } from "@/hooks/useAnimes";
+import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 type AnimeEp = {
@@ -59,6 +60,7 @@ export function AddNewAnime() {
   const route = useRouter();
 
   const onSubmit = async () => {
+    console.log(episodeList);
     // if (landspaceImage.length <= 0 || coverImage.length <= 0) {
     //   toast.error("Phim bắt buộc phải có một ảnh bìa ngang và một ảnh bìa dọc");
     //   return;
@@ -67,10 +69,10 @@ export function AddNewAnime() {
     //   toast.error("Vui lòng nhập tất cả thông tin");
     //   return;
     // }
-    if (genreSelected.length <= 0 || genreSelected.length > 3) {
-      toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
-      return;
-    }
+    // if (genreSelected.length <= 0 || genreSelected.length > 3) {
+    //   toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
+    //   return;
+    // }
     // episodeList.map((item, index) => {
     //   const data = {
     //     coverImage: "{ type: String }",

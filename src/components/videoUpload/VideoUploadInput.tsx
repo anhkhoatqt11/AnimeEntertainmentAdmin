@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
-import { UploadDropzone } from '@/lib/uploadthing';
-import { ourFileRouter } from '@/app/api/uploadthing/core';
+import { UploadDropzone } from "@/lib/uploadthing";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 // import { ourFileRouter } from '@/app/api/uploadthing/core';
 
 interface VideoUploadProps {
@@ -14,6 +14,7 @@ interface VideoUploadProps {
 export const VideoUploadInput = ({ onChange, endpoint }: VideoUploadProps) => {
   return (
     <UploadDropzone
+      className="h-[360px] ut-button:bg-blue-500 ut-label:text-lg ut-allowed-content:ut-uploading:text-blue-300"
       // onUploadProgress={(progress) => {
       //   console.log(
       //     '🚀 ~ file: VideoUploadInput.tsx:18 ~ VideoUploadInput ~ progress:',
@@ -22,6 +23,7 @@ export const VideoUploadInput = ({ onChange, endpoint }: VideoUploadProps) => {
       // }}
       endpoint={endpoint}
       onClientUploadComplete={(res) => {
+        console.log("trong");
         onChange(res?.[0]);
       }}
       onUploadError={(error: Error) => {

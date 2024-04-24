@@ -13,7 +13,7 @@ export const EpisodeItemCard = ({
     <div
       className="relative group"
       onClick={() => {
-        setVideoUrl(item.videoUrl);
+        setVideoUrl(item.content);
         setEpisodeName(item.episodeName);
         setCoverImage([
           {

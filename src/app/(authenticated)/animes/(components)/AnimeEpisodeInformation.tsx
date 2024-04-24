@@ -19,15 +19,18 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
 import toast, { Toaster } from "react-hot-toast";
 import { EpisodeItemCard } from "./EpisodeItemCard";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
+import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
+const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 function AnimeEpisodeInformation({ props }) {
   const [coverImage, setCoverImage] = React.useState([]);
   const [episodeName, setEpisodeName] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
   const [editMode, setEditMode] = useState(-1);
   const [adList, setAdList] = useState();
   const [adPick, setAdPick] = React.useState(new Set([]));
+  const [videoUrl, setVideoUrl] = useState("");
   const { fetchAllAdvertisements } = useAnimeEpisodes();
 
   useEffect(() => {
@@ -40,32 +43,36 @@ function AnimeEpisodeInformation({ props }) {
   }, []);
 
   const addEpisode = () => {
-    // if (coverImage.length <= 0) {
-    //   toast.error("Tập phim phải có 1 hình bìa");
-    //   return;
-    // }
-    // if (!episodeName || !videoUrl) {
-    //   toast.error("Vui lòng nhập tất cả thông tin");
-    //   return;
-    // }
+    if (coverImage.length <= 0) {
+      toast.error("Tập phim phải có 1 hình bìa");
+      return;
+    }
+    if (!episodeName) {
+      toast.error("Vui lòng nhập tên tập phim");
+      return;
+    }
+    if (!videoUrl) {
+      toast.error("Vui lòng tải video tập phim");
+      return;
+    }
     if (adPick.values.toString() === "") {
       toast.error("Vui lòng chọn quảng cáo");
       return;
     }
-    console.log(adPick.currentKey);
-    // props.setEpisodeList([
-    //   ...props.episodeList,
-    //   {
-    //     episodeName: episodeName,
-    //     coverImage: coverImage[0]?.preview,
-    //     content: videoUrl,
-    //     advertisement: "undefined",
-    //     views: 0,
-    //   },
-    // ]);
+    props.setEpisodeList([
+      ...props.episodeList,
+      {
+        episodeName: episodeName,
+        coverImage: coverImage[0]?.preview,
+        content: videoUrl,
+        advertisement: adPick.currentKey,
+        views: 0,
+      },
+    ]);
     setCoverImage([]);
     setEpisodeName("");
     setVideoUrl("");
+    setAdPick(new Set([]));
     toast.success("Đã thêm tập mới");
     return;
   };
@@ -75,6 +82,7 @@ function AnimeEpisodeInformation({ props }) {
     setCoverImage([]);
     setEpisodeName("");
     setVideoUrl("");
+    setAdPick(new Set([]));
     setEditMode(-1);
     toast.success("Đã xóa tập phim");
   };
@@ -128,16 +136,11 @@ function AnimeEpisodeInformation({ props }) {
                 <Label className="font-bold text-sm">
                   Nội dung: <span className="text-red-500">*</span>
                 </Label>
-                <Textarea
-                  className="w-full"
-                  radius="sm"
-                  variant="bordered"
-                  size="md"
-                  value={videoUrl}
-                  placeholder="Nhập nội dụng"
-                  onChange={(e) => {
-                    setVideoUrl(e.target.value);
-                  }}
+                <VideoUploader
+                  videoUrl={videoUrl}
+                  setVideoUrl={setVideoUrl}
+                  videoKey={undefined}
+                  setVideoKey={undefined}
                 />
               </div>
             </div>
@@ -244,6 +247,7 @@ function AnimeEpisodeInformation({ props }) {
                       setCoverImage([]);
                       setEpisodeName("");
                       setVideoUrl("");
+                      setAdPick(new Set([]));
                       setEditMode(-1);
                     }}
                   >

@@ -1,16 +1,16 @@
-import type { Config } from "tailwindcss"
-const {nextui} = require("@nextui-org/react");
-
+import type { Config } from "tailwindcss";
+const { nextui } = require("@nextui-org/react");
+import { withUt } from "uploadthing/tw";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -56,6 +56,7 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -77,7 +78,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"),nextui()],
-} satisfies Config
+  plugins: [require("tailwindcss-animate"), nextui()],
+} satisfies Config;
 
-export default config
+export default withUt(config);

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 
-import { Button } from '@/components/ui/button';
-import { VideoUploadInput } from '@/components/videoUpload/VideoUploadInput';
-import { postRequest } from '@/lib/fetch';
+import { Button } from "@/components/ui/button";
+import { VideoUploadInput } from "@/components/videoUpload/VideoUploadInput";
+import { postRequest } from "@/lib/fetch";
 
 interface ChapterVideoFormProps {
   // initialData: Chapter & { muxData?: MuxData | null };
@@ -21,25 +21,27 @@ export const VideoUploader = ({
   videoUrl,
   setVideoUrl,
 }: ChapterVideoFormProps) => {
-  const parts = videoUrl?.split('/');
+  const parts = videoUrl?.split("/");
 
   // Get the last part of the URL, which contains the key
   const keyPart = parts?.[parts.length - 1];
 
   // If you want to remove any query parameters, you can split by '?' and take the first part
-  const videoKey = keyPart?.split('?')[0];
+  const videoKey = keyPart?.split("?")[0];
   const onDelete = async () => {
+    setIsUploadVideo(true);
     const res = await postRequest({
-      endPoint: '/api/bai-viet/deleteVideo',
+      endPoint: "/api/uploadthing/deleteVideo",
       formData: { videoKey },
       isFormData: false,
     });
+    setIsUploadVideo(false);
     console.log(res);
     setVideoUrl(null);
   };
 
   return (
-    <div className="mt-6 relative ">
+    <div className="relative ">
       {/* {!isEditing &&
         (!initialData?.videoUrl ? null : (
           <div className="relative aspect-video mt-2">
@@ -47,25 +49,26 @@ export const VideoUploader = ({
           </div>
         ))} */}
       {videoUrl && (
-        <div className=" mb-3 lg:mb-9 ">
-          <Button
-            onClick={onDelete}
-            variant={'destructive'}
-            className="absolute right-0 "
-          >
-            Xóa
-          </Button>
+        <div>
+          <div className=" mt-2 px-2 relative">
+            <ReactPlayer
+              width={(window.innerWidth * 1) / 2}
+              url={videoUrl}
+              controls={true}
+            />
+            <div className="w-[200px] absolute top-0 right-3">
+              <Button
+                onClick={onDelete}
+                variant={"destructive"}
+                className="absolute right-0 "
+              >
+                Xóa video khỏi server
+              </Button>
+            </div>
+          </div>
         </div>
       )}
-      {videoUrl && (
-        <div className=" mt-2 px-2 ">
-          <ReactPlayer
-            width={window.innerWidth > 768 ? 600 : 290}
-            url={videoUrl}
-            controls={true}
-          />
-        </div>
-      )}
+
       {!videoUrl && (
         <div>
           <VideoUploadInput
