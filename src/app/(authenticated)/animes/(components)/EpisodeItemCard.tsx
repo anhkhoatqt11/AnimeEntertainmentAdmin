@@ -4,24 +4,20 @@ import { MdDeleteOutline } from "react-icons/md";
 export const EpisodeItemCard = ({
   id,
   item,
-  setCoverImage,
+  setDefaultImage,
   setEpisodeName,
   setVideoUrl,
   setEditMode,
+  setDuration,
 }) => {
   return (
     <div
       className="relative group"
       onClick={() => {
+        setDuration(item.totalTime);
         setVideoUrl(item.content);
         setEpisodeName(item.episodeName);
-        setCoverImage([
-          {
-            preview: item.coverImage,
-            url: item.coverImage,
-            name: item.episodeName,
-          },
-        ]);
+        setDefaultImage(item.coverImage);
         setEditMode(id);
       }}
     >

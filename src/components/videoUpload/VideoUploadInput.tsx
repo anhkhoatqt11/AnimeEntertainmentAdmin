@@ -23,7 +23,6 @@ export const VideoUploadInput = ({ onChange, endpoint }: VideoUploadProps) => {
       // }}
       endpoint={endpoint}
       onClientUploadComplete={(res) => {
-        console.log("trong");
         onChange(res?.[0]);
       }}
       onUploadError={(error: Error) => {

@@ -1,15 +1,8 @@
 "use client";
-
-// import { useEventOrganizer } from "@/hooks/useEventOrganizer";
-// import { checkPhoneNumber } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
 import { CircularProgress } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-// import TicketInformation, {
-//   TicketProps,
-// } from "../../(components)/(event)/(add)/TicketInformation";
-// import { useTicketOrganizer } from "@/hooks/useTicketOrganizer";
 import {
   Modal,
   ModalContent,
@@ -25,7 +18,6 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { useAnimes } from "@/hooks/useAnimes";
-import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 type AnimeEp = {
@@ -53,10 +45,6 @@ export function AddNewAnime() {
   const { startUpload } = useUploadThing("imageUploader");
   const { createNewEpisode } = useAnimeEpisodes();
   const { createNewAnime } = useAnimes();
-  //new ------------------------------
-  const [startIndex, setStartIndex] = useState(1);
-  const [eventId, setEventId] = useState(-1);
-  const [canSubmit, setCanSubmit] = useState(true);
   const route = useRouter();
 
   const onSubmit = async () => {

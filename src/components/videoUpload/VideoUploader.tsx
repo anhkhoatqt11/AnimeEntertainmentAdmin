@@ -5,6 +5,7 @@ import ReactPlayer from "react-player";
 import { Button } from "@/components/ui/button";
 import { VideoUploadInput } from "@/components/videoUpload/VideoUploadInput";
 import { postRequest } from "@/lib/fetch";
+import toast from "react-hot-toast";
 
 interface ChapterVideoFormProps {
   // initialData: Chapter & { muxData?: MuxData | null };
@@ -15,11 +16,13 @@ interface ChapterVideoFormProps {
   setVideoUrl: any;
   videoKey: any;
   setVideoKey: any;
+  setDuration: any;
 }
 
 export const VideoUploader = ({
   videoUrl,
   setVideoUrl,
+  setDuration,
 }: ChapterVideoFormProps) => {
   const parts = videoUrl?.split("/");
 
@@ -29,15 +32,15 @@ export const VideoUploader = ({
   // If you want to remove any query parameters, you can split by '?' and take the first part
   const videoKey = keyPart?.split("?")[0];
   const onDelete = async () => {
-    setIsUploadVideo(true);
     const res = await postRequest({
       endPoint: "/api/uploadthing/deleteVideo",
       formData: { videoKey },
       isFormData: false,
     });
-    setIsUploadVideo(false);
     console.log(res);
+    toast.success("Đã xóa video thành công");
     setVideoUrl(null);
+    setDuration(0);
   };
 
   return (
@@ -55,6 +58,10 @@ export const VideoUploader = ({
               width={(window.innerWidth * 1) / 2}
               url={videoUrl}
               controls={true}
+              onDuration={(duration) => {
+                console.log(Math.floor(duration));
+                setDuration(Math.floor(duration));
+              }}
             />
             <div className="w-[200px] absolute top-0 right-3">
               <Button
