@@ -23,6 +23,7 @@ import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { postRequest } from "@/lib/fetch";
+import { useAdvertisement } from "@/hooks/useAdvertisement";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 function AnimeEpisodeInformation({ props }) {
@@ -33,9 +34,11 @@ function AnimeEpisodeInformation({ props }) {
   const [adList, setAdList] = useState();
   const [adPick, setAdPick] = React.useState(new Set([]));
   const [videoUrl, setVideoUrl] = useState("");
+  const [defaultAd, setDefaultAd] = useState("");
   const [duration, setDuration] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const { fetchAllAdvertisements } = useAnimeEpisodes();
+  const { updateUsedAdCount } = useAdvertisement();
   const { startUpload } = useUploadThing("imageUploader");
 
   useEffect(() => {
@@ -64,6 +67,7 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng chọn quảng cáo");
       return;
     }
+    if (updateAdList(adPick.currentKey, "") === false) return;
 
     processData();
   };
@@ -102,8 +106,91 @@ function AnimeEpisodeInformation({ props }) {
     return;
   };
 
+  const editEpisode = async () => {
+    if (!episodeName) {
+      toast.error("Vui lòng nhập tên tập phim");
+      return;
+    }
+    if (!videoUrl) {
+      toast.error("Vui lòng tải video tập phim");
+      return;
+    }
+    if (adPick.size === 0) {
+      toast.error("Vui lòng chọn quảng cáo");
+      return;
+    }
+    if (updateAdList(adPick.currentKey, defaultAd) === false) return;
+    processEditData();
+  };
+
+  const processEditData = async () => {
+    console.log(defaultImage, episodeName, videoUrl);
+    setIsProcessing(true);
+    if (coverImage.length > 0) {
+      const [posterImage] = await Promise.all([
+        startUpload([...coverImage]).then((res) => {
+          const formattedImages = res?.map((image) => ({
+            id: image.key,
+            name: image.key.split("_")[1] ?? image.key,
+            url: image.url,
+          }));
+          return formattedImages ?? null;
+        }),
+      ]);
+      const parts = defaultImage?.split("/");
+      const keyPart = parts?.[parts.length - 1];
+      const imageKey = keyPart?.split("?")[0];
+      await postRequest({
+        endPoint: "/api/uploadthing/deleteImage",
+        formData: { imageKey },
+        isFormData: false,
+      });
+      props.setEpisodeList(
+        props.episodeList.map((item, index) =>
+          index === editMode
+            ? {
+                ...item,
+                episodeName: episodeName,
+                coverImage: posterImage ? posterImage[0]?.url : "",
+                content: videoUrl,
+                advertisement: adPick.currentKey,
+                views: 0,
+                totalTime: duration,
+              }
+            : item
+        )
+      );
+    } else {
+      props.setEpisodeList(
+        props.episodeList.map((item, index) =>
+          index === editMode
+            ? {
+                ...item,
+                episodeName: episodeName,
+                coverImage: defaultImage,
+                content: videoUrl,
+                advertisement: adPick.currentKey,
+                views: 0,
+                totalTime: duration,
+              }
+            : item
+        )
+      );
+    }
+    setCoverImage([]);
+    setEpisodeName("");
+    setVideoUrl("");
+    setDefaultImage("");
+    setDuration(0);
+    setAdPick(new Set([]));
+    setEditMode(-1);
+    toast.success("Đã sửa tập phim");
+    setIsProcessing(false);
+  };
+
   const removeEpisode = async () => {
     setIsProcessing(true);
+    updateAdList("", defaultAd);
     if (videoUrl !== "") {
       const parts = videoUrl?.split("/");
       const keyPart = parts?.[parts.length - 1];
@@ -134,6 +221,47 @@ function AnimeEpisodeInformation({ props }) {
     setEditMode(-1);
     toast.success("Đã xóa tập phim");
     setIsProcessing(false);
+  };
+
+  const updateAdList = async (id, idRemove) => {
+    console.log(id, idRemove);
+    if (id === idRemove) return true;
+
+    const adItem = adList?.filter((item) => item?._id === id);
+    if (adItem[0].amount - adItem[0].usedCount === 0) {
+      toast.error("Số lượt sử dụng quảng cáo đã đạt giới hạn");
+      return false;
+    }
+    setAdList(
+      adList?.map((item) =>
+        id !== "" && item?._id === id
+          ? {
+              ...item,
+              usedCount: item.usedCount + 1,
+            }
+          : idRemove !== "" && item?._id === idRemove
+          ? {
+              ...item,
+              usedCount: item.usedCount - 1,
+            }
+          : item
+      )
+    );
+    if (id !== "") {
+      const data = {
+        _id: id,
+        value: -1,
+      };
+      await updateUsedAdCount(data);
+    }
+    if (idRemove !== "") {
+      const data = {
+        _id: idRemove,
+        value: 1,
+      };
+      await updateUsedAdCount(data);
+    }
+    return true;
   };
 
   return (
@@ -280,12 +408,12 @@ function AnimeEpisodeInformation({ props }) {
               <div className="space-y-3">
                 <Button
                   disabled={isProcessing}
-                  className={`w-full bg-blue-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
+                  className={`w-full bg-emerald-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
                   onClick={() => {
-                    addEpisode();
+                    editEpisode();
                   }}
                 >
-                  Thêm tập phim
+                  Sửa tập phim
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
@@ -326,6 +454,8 @@ function AnimeEpisodeInformation({ props }) {
                   setVideoUrl={setVideoUrl}
                   setEditMode={setEditMode}
                   setDuration={setDuration}
+                  setAdPick={setAdPick}
+                  setDefaultAd={setDefaultAd}
                 />
               ))}
             </div>

@@ -9,6 +9,8 @@ export const EpisodeItemCard = ({
   setVideoUrl,
   setEditMode,
   setDuration,
+  setAdPick,
+  setDefaultAd,
 }) => {
   return (
     <div
@@ -19,9 +21,11 @@ export const EpisodeItemCard = ({
         setEpisodeName(item.episodeName);
         setDefaultImage(item.coverImage);
         setEditMode(id);
+        setAdPick(new Set([item.advertisement]));
+        setDefaultAd(item.advertisement);
       }}
     >
-      <div className="flex flex-row p-3 group">
+      <div className="flex flex-row pt-3 pr-3 pl-3 group">
         <div className="overflow-hidden rounded w-[120px]">
           <AspectRatio ratio={16 / 9}>
             <img

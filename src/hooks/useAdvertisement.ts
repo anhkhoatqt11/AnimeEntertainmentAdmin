@@ -25,6 +25,14 @@ export const useAdvertisement = () => {
     });
     return res;
   };
+  const updateUsedAdCount = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/advertisements/updateUsedCount",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
 
   const test = async () => {
     const res = await postRequest({
@@ -39,6 +47,7 @@ export const useAdvertisement = () => {
     fetchAllAdvertisement,
     createAdvertisement,
     editAdvertisement,
+    updateUsedAdCount,
     test,
   };
 };

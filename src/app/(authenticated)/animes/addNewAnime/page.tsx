@@ -1,5 +1,3 @@
-import AnimeEpisodeInformation from "../(components)/AnimeEpisodeInformation";
-import AnimeInformation from "../(components)/AnimeInformation";
 import { AddNewAnime } from "./AddNewAnime";
 
 export default function page() {
