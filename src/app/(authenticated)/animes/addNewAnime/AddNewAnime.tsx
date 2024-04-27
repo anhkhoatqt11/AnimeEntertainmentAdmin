@@ -116,6 +116,23 @@ export function AddNewAnime() {
         }
       });
     });
+    if (episodeList.length === 0) {
+      const data = {
+        coverImage: posterImage ? posterImage[0]?.url : "",
+        landspaceImage: landspacePoster ? landspacePoster[0]?.url : "",
+        movieName: movieName,
+        genres: genreSelected,
+        publishTime: weeklyTime,
+        ageFor: ageFor.currentKey,
+        publisher: publisher,
+        description: description,
+        episodes: [],
+      };
+      createNewAnime(data).then((res) => {
+        toast.success("Đã thêm bộ phim mới thành công");
+        setIsLoading(false);
+      });
+    }
   };
 
   return (

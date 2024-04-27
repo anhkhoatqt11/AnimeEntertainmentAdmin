@@ -12,7 +12,7 @@ export const useAnimes = () => {
 
   const fetchAnimeById = async (id) => {
     const res = await getRequest({
-      endPoint: `/api/animes/animes-detail?id=${id}`,
+      endPoint: `/api/animes/animes-detail?animeId=${id}`,
     });
     return res;
   };
@@ -26,9 +26,29 @@ export const useAnimes = () => {
     return res;
   };
 
+  const editAnime = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/animes/animes-detail/edit",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
+
+  const deleteAnime = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/animes/animes-detail/delete",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
+
   return {
     fetchAllAnimes,
     fetchAnimeById,
     createNewAnime,
+    editAnime,
+    deleteAnime,
   };
 };

@@ -50,7 +50,7 @@ function AnimeEpisodeInformation({ props }) {
     fetchAdList();
   }, []);
 
-  const addEpisode = () => {
+  const addEpisode = async () => {
     if (coverImage.length <= 0) {
       toast.error("Tập phim phải có 1 hình bìa");
       return;
@@ -67,7 +67,7 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng chọn quảng cáo");
       return;
     }
-    if (updateAdList(adPick.currentKey, "") === false) return;
+    if ((await updateAdList(adPick.currentKey, "")) === false) return;
 
     processData();
   };
@@ -93,6 +93,10 @@ function AnimeEpisodeInformation({ props }) {
         advertisement: adPick.currentKey,
         views: 0,
         totalTime: duration,
+
+        isNew: true,
+        isEditing: false,
+        isDeleting: false,
       },
     ]);
     setCoverImage([]);
@@ -119,7 +123,7 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng chọn quảng cáo");
       return;
     }
-    if (updateAdList(adPick.currentKey, defaultAd) === false) return;
+    if ((await updateAdList(adPick.currentKey, defaultAd)) === false) return;
     processEditData();
   };
 
@@ -156,6 +160,9 @@ function AnimeEpisodeInformation({ props }) {
                 advertisement: adPick.currentKey,
                 views: 0,
                 totalTime: duration,
+                isNew: !item.isEditing,
+                isEditing: item.isEditing,
+                isDeleting: false,
               }
             : item
         )
@@ -172,6 +179,9 @@ function AnimeEpisodeInformation({ props }) {
                 advertisement: adPick.currentKey,
                 views: 0,
                 totalTime: duration,
+                isNew: !item.isEditing,
+                isEditing: item.isEditing,
+                isDeleting: false,
               }
             : item
         )
@@ -211,7 +221,16 @@ function AnimeEpisodeInformation({ props }) {
         isFormData: false,
       });
     }
-    props.setEpisodeList(props.episodeList.toSpliced(editMode, 1));
+    props.setEpisodeList(
+      props.episodeList.map((item, index) =>
+        index === editMode
+          ? {
+              ...item,
+              isDeleting: true,
+            }
+          : item
+      )
+    );
     setCoverImage([]);
     setEpisodeName("");
     setVideoUrl("");
@@ -224,7 +243,6 @@ function AnimeEpisodeInformation({ props }) {
   };
 
   const updateAdList = async (id, idRemove) => {
-    console.log(id, idRemove);
     if (id === idRemove) return true;
 
     const adItem = adList?.filter((item) => item?._id === id);
@@ -445,19 +463,23 @@ function AnimeEpisodeInformation({ props }) {
           </div>
           <div className="flex flex-col gap-3 w-full lg:w-[30%]">
             <div className=" w-full h-full border-1 rounded overflow-hidden">
-              {props.episodeList.map((item, index) => (
-                <EpisodeItemCard
-                  id={index}
-                  item={item}
-                  setEpisodeName={setEpisodeName}
-                  setDefaultImage={setDefaultImage}
-                  setVideoUrl={setVideoUrl}
-                  setEditMode={setEditMode}
-                  setDuration={setDuration}
-                  setAdPick={setAdPick}
-                  setDefaultAd={setDefaultAd}
-                />
-              ))}
+              {props.episodeList.map((item, index) =>
+                !item.isDeleting ? (
+                  <EpisodeItemCard
+                    id={index}
+                    item={item}
+                    setEpisodeName={setEpisodeName}
+                    setDefaultImage={setDefaultImage}
+                    setVideoUrl={setVideoUrl}
+                    setEditMode={setEditMode}
+                    setDuration={setDuration}
+                    setAdPick={setAdPick}
+                    setDefaultAd={setDefaultAd}
+                  />
+                ) : (
+                  <></>
+                )
+              )}
             </div>
           </div>
         </div>

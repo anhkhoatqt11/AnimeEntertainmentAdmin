@@ -29,7 +29,7 @@ export default function AnimeItemCard({ item }) {
                   style={{ maxLines: 1, whiteSpace: "nowrap" }}
                   className="text-[12px] text-white  mb-3 text-ellipsis overflow-hidden font-extralight"
                 >
-                  {item.episodes.length} tập
+                  {item?.episodes?.length} tập
                 </p>
                 <p
                   style={{ maxLines: 1, whiteSpace: "nowrap" }}

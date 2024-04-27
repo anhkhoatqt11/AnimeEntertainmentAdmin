@@ -83,7 +83,7 @@ export async function GET(request: Request) {
 
   const data = {
     data: animes,
-    totalPages: Math.ceil(countItem / limit),
+    totalPages: Math.ceil(countItem.length / limit),
     totalItems: animes.length,
   };
 
