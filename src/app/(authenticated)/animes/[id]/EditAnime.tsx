@@ -176,7 +176,7 @@ export function EditAnime({ animeId }) {
             comments: [],
             likes: [],
             views: 0,
-            advertisements: item.advertisement,
+            advertisement: item.advertisement,
           };
           createNewEpisode(data).then(async (res) => {
             episodeIdList.push(res?._id);
@@ -192,7 +192,7 @@ export function EditAnime({ animeId }) {
             episodeName: item.episodeName,
             totalTime: item.totalTime,
             content: item.content,
-            advertisements: item.advertisement,
+            advertisement: item.advertisement,
           };
           editEpisode(data).then((res) => {
             if (index === episodeList.length - 1) {
@@ -234,24 +234,53 @@ export function EditAnime({ animeId }) {
     episodeList?.map(async (item, index) => {
       const body = {
         episodeId: item._id,
-        advertisementId: item.advertisement,
       };
       deleteEpisode(body);
-      if (index === episodeIdList.length - 1) {
-        deleteAnime(data).then((res) => {
+      if (item.isEditing && !item.isDeleting) {
+        removeImageSourceFromDB(item.coverImage);
+        removeVideoSourceFromDB(item.content);
+      }
+      if (index === episodeList.length - 1) {
+        deleteAnime(data).then(async (res) => {
           toast.success("Đã xóa phim khỏi danh sách");
+          removeImageSourceFromDB(defaultCover);
+          removeImageSourceFromDB(defaultLandspace);
           setIsLoading(false);
           route.push("/animes");
         });
       }
     });
-    if (episodeIdList.length === 0) {
-      deleteAnime(data).then((res) => {
+    if (episodeList.length === 0) {
+      deleteAnime(data).then(async (res) => {
         toast.success("Đã xóa phim khỏi danh sách");
+        removeImageSourceFromDB(defaultCover);
+        removeImageSourceFromDB(defaultLandspace);
         setIsLoading(false);
         route.push("/animes");
       });
     }
+  };
+
+  const removeImageSourceFromDB = async (url) => {
+    const parts = url?.split("/");
+    const keyPart = parts?.[parts.length - 1];
+    const imageKey = keyPart?.split("?")[0];
+    await postRequest({
+      endPoint: "/api/uploadthing/deleteImage",
+      formData: { imageKey },
+      isFormData: false,
+    });
+  };
+
+  const removeVideoSourceFromDB = async (url) => {
+    const parts = url?.split("/");
+    const keyPart = parts?.[parts.length - 1];
+    const videoKey = keyPart?.split("?")[0];
+    await postRequest({
+      endPoint: "/api/uploadthing/deleteVideo",
+      formData: { videoKey },
+      isFormData: false,
+    });
   };
 
   return (

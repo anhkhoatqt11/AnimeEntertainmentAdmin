@@ -93,7 +93,7 @@ export function AddNewAnime() {
         comments: [],
         likes: [], // list of user liked
         views: 0,
-        advertisements: item.advertisement,
+        advertisement: item.advertisement,
       };
       createNewEpisode(data).then((res) => {
         episodeIdList.push(res?._id);

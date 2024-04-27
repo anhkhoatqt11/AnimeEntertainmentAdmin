@@ -38,7 +38,6 @@ function AnimeEpisodeInformation({ props }) {
   const [duration, setDuration] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const { fetchAllAdvertisements } = useAnimeEpisodes();
-  const { updateUsedAdCount } = useAdvertisement();
   const { startUpload } = useUploadThing("imageUploader");
 
   useEffect(() => {
@@ -246,7 +245,7 @@ function AnimeEpisodeInformation({ props }) {
     if (id === idRemove) return true;
 
     const adItem = adList?.filter((item) => item?._id === id);
-    if (adItem[0].amount - adItem[0].usedCount === 0) {
+    if (adItem[0]?.amount - adItem[0]?.usedCount === 0) {
       toast.error("Số lượt sử dụng quảng cáo đã đạt giới hạn");
       return false;
     }
@@ -265,20 +264,7 @@ function AnimeEpisodeInformation({ props }) {
           : item
       )
     );
-    if (id !== "") {
-      const data = {
-        _id: id,
-        value: -1,
-      };
-      await updateUsedAdCount(data);
-    }
-    if (idRemove !== "") {
-      const data = {
-        _id: idRemove,
-        value: 1,
-      };
-      await updateUsedAdCount(data);
-    }
+
     return true;
   };
 
