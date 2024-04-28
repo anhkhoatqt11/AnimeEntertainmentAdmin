@@ -8,9 +8,7 @@ import {
 } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { BiBookAdd } from "react-icons/bi";
-import React, { useEffect, useState } from "react";
-import { Dispatch, SetStateAction } from "react";
-import { Form } from "react-hook-form";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
@@ -39,18 +37,18 @@ export function SearchAndCreateBar({ setSearchWord, setSort, setIsLoaded }) {
       <Button
         className={`h-[50px] w-full md:w-[200px] rounded-md m-0 p-0 font-medium shadow-md bg-gradient-to-r from-violet-500 to-fuchsia-500 transition ease-in-out hover:scale-105 text-sm text-white`}
         onClick={() => {
-          router.push("/animes/addNewAnime");
+          router.push("/comics/addNewComic");
         }}
       >
         <BiBookAdd className="mr-2" />
-        Tạo phim mới
+        Tạo truyện mới
       </Button>
       <div className="flex flex-row items-center">
         <Input
           className="h-[52px] w-full md:w-[270px] bg-white"
           variant="bordered"
           radius="sm"
-          label="Nhập tên anime ..."
+          label="Nhập tên truyện ..."
           onChange={(e) => setSearchKey(e.target.value)}
         />
         <Button
@@ -89,7 +87,7 @@ export function SearchAndCreateBar({ setSearchWord, setSort, setIsLoaded }) {
                 setSort(-1);
               }}
             >
-              Phim mới nhất
+              Truyện mới nhất
             </DropdownItem>
             <DropdownItem
               key="old"
@@ -98,7 +96,7 @@ export function SearchAndCreateBar({ setSearchWord, setSort, setIsLoaded }) {
                 setSort(1);
               }}
             >
-              Phim cũ nhất
+              Truyện cũ nhất
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

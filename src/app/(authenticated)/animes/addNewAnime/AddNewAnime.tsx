@@ -18,6 +18,7 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { useAnimes } from "@/hooks/useAnimes";
+import Loader from "@/components/Loader";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 type AnimeEp = {
@@ -62,6 +63,7 @@ export function AddNewAnime() {
       return;
     }
     setIsLoading(true);
+    scroll();
     const [posterImage] = await Promise.all([
       startUpload([...coverImage]).then((res) => {
         const formattedImages = res?.map((image) => ({
@@ -135,6 +137,13 @@ export function AddNewAnime() {
     }
   };
 
+  const scroll = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -202,14 +211,8 @@ export function AddNewAnime() {
           Tạo phim mới
         </Button>
         {isLoading ? (
-          <div className="w-full h-full flex justify-center bg-gray-200 z-10 absolute top-0">
-            <CircularProgress
-              color="success"
-              aria-label="Loading..."
-              classNames={{
-                svg: "w-20 h-20 text-gray-600",
-              }}
-            />
+          <div className="w-full h-screen flex items-center justify-center bg-gray-200 z-10 absolute top-0">
+            <Loader />
           </div>
         ) : null}
       </div>

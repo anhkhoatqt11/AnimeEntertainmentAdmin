@@ -8,9 +8,8 @@ import { useState } from "react";
 import AnimeItemCard from "./AnimeItemCard";
 import { Pagination } from "@nextui-org/react";
 
-function AnimeList({ props, sort }) {
+function AnimeList({ props, sort, isLoaded, setIsLoaded }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoaded, setIsLoaded] = React.useState(false);
 
   const { fetchAllAnimes } = useAnimes();
 

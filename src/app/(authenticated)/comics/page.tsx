@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from "react";
+import { ComicManagement } from "./ComicManagement";
 
 const page = () => {
   return (
-    <div>page</div>
-  )
-}
+    <div className="w-full h-full bg-slate-100">
+      <ComicManagement />
+    </div>
+  );
+};
 
-export default page
+export default page;

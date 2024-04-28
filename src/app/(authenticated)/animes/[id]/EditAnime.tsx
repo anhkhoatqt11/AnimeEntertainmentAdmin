@@ -100,6 +100,7 @@ export function EditAnime({ animeId }) {
       return;
     }
     setIsLoading(true);
+    scroll();
     var coverUrl = "",
       landspaceUrl = "";
     if (coverImage.length > 0) {
@@ -283,6 +284,13 @@ export function EditAnime({ animeId }) {
     });
   };
 
+  const scroll = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -368,14 +376,8 @@ export function EditAnime({ animeId }) {
           Xóa phim
         </Button>
         {isLoading ? (
-          <div className="w-full h-full flex justify-center bg-gray-200 z-10 absolute top-0">
-            <CircularProgress
-              color="success"
-              aria-label="Loading..."
-              classNames={{
-                svg: "w-20 h-20 text-gray-600",
-              }}
-            />
+          <div className="w-full h-screen flex items-center justify-center bg-gray-200 z-10 absolute top-0">
+            <Loader />
           </div>
         ) : null}
       </div>

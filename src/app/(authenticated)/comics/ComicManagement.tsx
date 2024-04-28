@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import SearchAndCreateBar from "./(components)/SearchCreateBar";
-import AnimeList from "./(components)/AnimeList";
+import ComicList from "./(components)/ComicList";
 
-export function AnimeManagement() {
+export function ComicManagement() {
   const [searchWord, setSearchWord] = useState("");
   const [sort, setSort] = useState(-1);
   const [isLoaded, setIsLoaded] = React.useState(false);
@@ -16,7 +16,7 @@ export function AnimeManagement() {
         setSort={setSort}
         setIsLoaded={setIsLoaded}
       />
-      <AnimeList
+      <ComicList
         props={searchWord}
         sort={sort}
         isLoaded={isLoaded}
