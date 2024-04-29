@@ -12,87 +12,99 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import AnimeInformation from "../(components)/AnimeInformation";
-import AnimeEpisodeInformation from "../(components)/AnimeEpisodeInformation";
+import ComicInformation from "../(components)/ComicInformation";
+import ComicChapterInformation from "../(components)/ComicChapterInformation";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
-import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
-import { useAnimes } from "@/hooks/useAnimes";
 import { postRequest } from "@/lib/fetch";
+import { useComicChapters } from "@/hooks/useComicChapters";
+import { useComics } from "@/hooks/useComics";
 import Loader from "@/components/Loader";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
-type AnimeEp = {
-  _id: string;
-  episodeName: string;
+type ComicChap = {
+  chapterName: string;
   coverImage: string;
-  content: string;
-  advertisement: string;
+  publicTime: Date;
+  content: [];
   views: number;
-  totalTime: number;
+  comments: [];
+  likes: [];
+  unlockPrice: number;
+  userUnlocked: [];
   isNew: boolean;
   isEditing: boolean;
   isDeleting: boolean;
 };
 
-export function EditAnime({ animeId }) {
+export function EditComic({ comicId }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [landspaceImage, setLandspaceImage] = React.useState([]);
   const [coverImage, setCoverImage] = React.useState([]);
   const [defaultCover, setDefaultCover] = useState("");
   const [defaultLandspace, setDefaultLandspace] = useState("");
-  const [movieName, setMovieName] = React.useState("");
+  const [comicName, setComicName] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [genreSelected, setGenreSelected] = React.useState([]);
+  const [artist, setArtist] = React.useState("");
+  const [author, setAuthor] = React.useState("");
   const [publisher, setPublisher] = React.useState("");
   const [weeklyTime, setWeeklyTime] = React.useState("");
   const [ageFor, setAgeFor] = React.useState(new Set(["10+"]));
-  const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
-  const [episodeIdList, setEpisodeIdList] = useState([]);
+  const [detailChapterList, setDetailChapterList] = useState<ComicChap[]>([]);
+  const [chapterIdList, setChapterIdList] = useState([]);
   const [actionType, setActionType] = useState(1);
   const { startUpload } = useUploadThing("imageUploader");
-  const { createNewEpisode, editEpisode, deleteEpisode } = useAnimeEpisodes();
-  const { editAnime, deleteAnime, fetchAnimeById } = useAnimes();
+  const { createNewChapter, editChapter, deleteChapter } = useComicChapters();
+  const { editComic, deleteComic, fetchComicById } = useComics();
   const route = useRouter();
 
   useEffect(() => {
-    const fetchDetailAnime = async () => {
-      let episodeCopy: AnimeEp[] = [];
-      await fetchAnimeById(animeId).then((res) => {
+    const fetchDetailComic = async () => {
+      let chapterCopy: ComicChap[] = [];
+      await fetchComicById(comicId).then((res) => {
         setDefaultCover(res[0]?.coverImage);
         setDefaultLandspace(res[0]?.landspaceImage);
-        setMovieName(res[0]?.movieName);
+        setComicName(res[0]?.comicName);
         setDescription(res[0]?.description);
         setGenreSelected(res[0]?.genres);
+        setAuthor(res[0]?.author);
+        setArtist(res[0]?.artist);
         setPublisher(res[0]?.publisher);
-        setWeeklyTime(res[0]?.publishTime);
+        setWeeklyTime(res[0]?.newChapterTime);
         setAgeFor(new Set([res[0]?.ageFor]));
-        setEpisodeIdList(res[0]?.episodes);
-        res[0]?.episodeList.map((item, index) => {
-          episodeCopy.push({
+        setChapterIdList(res[0]?.chapterList);
+        res[0]?.detailChapterList.map((item, index) => {
+          chapterCopy.push({
             _id: item?._id,
-            episodeName: item?.episodeName,
+            chapterName: item?.chapterName,
             coverImage: item?.coverImage,
             content: item?.content,
-            advertisement: item?.advertisement,
             views: item?.views,
-            totalTime: item?.totalTime,
+            unlockPrice: item?.unlockPrice,
             isNew: false,
             isEditing: true,
             isDeleting: false,
           });
 
-          if (index === res[0]?.episodeList.length - 1) {
-            setEpisodeList(episodeCopy);
+          if (index === res[0]?.detailChapterList.length - 1) {
+            setDetailChapterList(chapterCopy);
           }
         });
       });
     };
-    fetchDetailAnime();
+    fetchDetailComic();
   }, []);
   const onSubmit = async () => {
-    if (!movieName || !description || !publisher || !weeklyTime) {
+    if (
+      !comicName ||
+      !description ||
+      !publisher ||
+      !artist ||
+      !author ||
+      !weeklyTime
+    ) {
       toast.error("Vui lòng nhập tất cả thông tin");
       return;
     }
@@ -146,21 +158,21 @@ export function EditAnime({ animeId }) {
       });
       landspaceUrl = landspacePoster ? landspacePoster[0]?.url : "";
     }
-    processEpisode(coverUrl, landspaceUrl);
+    processChapter(coverUrl, landspaceUrl);
   };
 
-  const processEpisode = async (coverUrl, landspaceUrl) => {
-    episodeList.map((item, index) => {
+  const processChapter = async (coverUrl, landspaceUrl) => {
+    detailChapterList.map((item, index) => {
       if (item.isDeleting) {
         if (item.isEditing) {
           // delete from database
           const body = {
-            episodeId: item._id,
+            chapterId: item._id,
           };
-          deleteEpisode(body).then((res) => {
-            var indexDelete = episodeIdList.findIndex((i) => i === item._id);
-            episodeIdList.toSpliced(indexDelete, 1);
-            if (index === episodeList.length - 1) {
+          deleteChapter(body).then((res) => {
+            var indexDelete = chapterIdList.findIndex((i) => i === item._id);
+            chapterIdList.toSpliced(indexDelete, 1);
+            if (index === detailChapterList.length - 1) {
               processEditing(coverUrl, landspaceUrl);
             }
           });
@@ -170,94 +182,96 @@ export function EditAnime({ animeId }) {
           // adding to database
           const data = {
             coverImage: item.coverImage,
-            episodeName: item.episodeName,
-            totalTime: item.totalTime,
+            chapterName: item.chapterName,
+            unlockPrice: item.unlockPrice,
             publicTime: new Date(),
             content: item.content,
             comments: [],
             likes: [],
             views: 0,
-            advertisement: item.advertisement,
+            userUnlocked: [],
           };
-          createNewEpisode(data).then(async (res) => {
-            episodeIdList.push(res?._id);
-            if (index === episodeList.length - 1) {
+          createNewChapter(data).then(async (res) => {
+            chapterIdList.push(res?._id);
+            if (index === detailChapterList.length - 1) {
               await processEditing(coverUrl, landspaceUrl);
             }
           });
         } else {
           // editing from database
           const data = {
-            _id: item._id,
             coverImage: item.coverImage,
-            episodeName: item.episodeName,
-            totalTime: item.totalTime,
+            chapterName: item.chapterName,
+            unlockPrice: item.unlockPrice,
             content: item.content,
-            advertisement: item.advertisement,
           };
-          editEpisode(data).then((res) => {
-            if (index === episodeList.length - 1) {
+          editChapter(data).then((res) => {
+            if (index === detailChapterList.length - 1) {
               processEditing(coverUrl, landspaceUrl);
             }
           });
         }
       }
     });
-    if (episodeList.length === 0) {
+    if (detailChapterList.length === 0) {
       processEditing(coverUrl, landspaceUrl);
     }
   };
 
   const processEditing = async (coverUrl, landspaceUrl) => {
     const data = {
-      animeId: animeId,
+      comicId: comicId,
       coverImage: coverUrl !== "" ? coverUrl : defaultCover,
       landspaceImage: landspaceUrl !== "" ? landspaceUrl : defaultLandspace,
-      movieName: movieName,
+      comicName: comicName,
       genres: genreSelected,
-      publishTime: weeklyTime,
+      author: author,
+      artist: artist,
+      newChapterTime: weeklyTime,
       ageFor: ageFor.currentKey,
       publisher: publisher,
       description: description,
-      episodes: episodeIdList,
+      chapterList: chapterIdList,
     };
-    await editAnime(data).then((res) => {
-      toast.success("Đã sửa thông tin bộ phim");
+    await editComic(data).then((res) => {
+      toast.success("Đã sửa thông tin bộ truyện");
       setIsLoading(false);
     });
   };
 
-  const removeAnime = () => {
+  const removeComic = () => {
     setIsLoading(true);
     const data = {
-      animeId: animeId,
+      comicId: comicId,
     };
-    episodeList?.map(async (item, index) => {
+    detailChapterList?.map(async (item, index) => {
       const body = {
-        episodeId: item._id,
+        chapterId: item._id,
       };
-      deleteEpisode(body);
+      deleteChapter(body);
       if (item.isEditing && !item.isDeleting) {
         removeImageSourceFromDB(item.coverImage);
-        removeVideoSourceFromDB(item.content);
+        item.content?.map((i) => {
+          removeImageSourceFromDB(i);
+        });
       }
-      if (index === episodeList.length - 1) {
-        deleteAnime(data).then(async (res) => {
+      if (index === detailChapterList.length - 1) {
+        deleteComic(data).then(async (res) => {
           toast.success("Đã xóa phim khỏi danh sách");
           removeImageSourceFromDB(defaultCover);
           removeImageSourceFromDB(defaultLandspace);
           setIsLoading(false);
-          route.push("/animes");
+          route.push("/comics");
         });
       }
     });
-    if (episodeList.length === 0) {
-      deleteAnime(data).then(async (res) => {
+    if (detailChapterList.length === 0) {
+      deleteComic(data).then(async (res) => {
         toast.success("Đã xóa phim khỏi danh sách");
         removeImageSourceFromDB(defaultCover);
         removeImageSourceFromDB(defaultLandspace);
         setIsLoading(false);
-        route.push("/animes");
+        route.push("/comics");
       });
     }
   };
@@ -269,17 +283,6 @@ export function EditAnime({ animeId }) {
     await postRequest({
       endPoint: "/api/uploadthing/deleteImage",
       formData: { imageKey },
-      isFormData: false,
-    });
-  };
-
-  const removeVideoSourceFromDB = async (url) => {
-    const parts = url?.split("/");
-    const keyPart = parts?.[parts.length - 1];
-    const videoKey = keyPart?.split("?")[0];
-    await postRequest({
-      endPoint: "/api/uploadthing/deleteVideo",
-      formData: { videoKey },
       isFormData: false,
     });
   };
@@ -303,8 +306,8 @@ export function EditAnime({ animeId }) {
               <ModalBody>
                 <p>
                   {actionType === 1
-                    ? "Bạn có chắc chắn muốn sửa thông tin phim này"
-                    : "Bạn có chắc chắn muốn xóa thông tin phim này"}
+                    ? "Bạn có chắc chắn muốn sửa thông tin truyện này"
+                    : "Bạn có chắc chắn muốn xóa thông tin truyện này"}
                 </p>
               </ModalBody>
               <ModalFooter>
@@ -315,10 +318,10 @@ export function EditAnime({ animeId }) {
                     onClose();
                     if (actionType === 1) {
                       onSubmit();
-                    } else removeAnime();
+                    } else removeComic();
                   }}
                 >
-                  {actionType === 1 ? "Sửa phim" : "Xóa phim"}
+                  {actionType === 1 ? "Sửa truyện" : "Xóa truyện"}
                 </Button>
                 <Button color="primary" onPress={onClose}>
                   Hủy
@@ -329,7 +332,7 @@ export function EditAnime({ animeId }) {
         </ModalContent>
       </Modal>
       <div className="relative min-h-[1032px]">
-        <AnimeInformation
+        <ComicInformation
           props={{
             landspaceImage,
             setLandspaceImage,
@@ -337,8 +340,12 @@ export function EditAnime({ animeId }) {
             setCoverImage,
             defaultCover,
             defaultLandspace,
-            movieName,
-            setMovieName,
+            comicName,
+            setComicName,
+            author,
+            setAuthor,
+            artist,
+            setArtist,
             description,
             setDescription,
             genreSelected,
@@ -352,10 +359,10 @@ export function EditAnime({ animeId }) {
             setIsLoading,
           }}
         />
-        <AnimeEpisodeInformation
+        <ComicChapterInformation
           props={{
-            episodeList,
-            setEpisodeList,
+            detailChapterList,
+            setDetailChapterList,
           }}
         />
         <Button
@@ -363,7 +370,7 @@ export function EditAnime({ animeId }) {
           radius="sm"
           onClick={onOpen}
         >
-          Sửa thông tin phim
+          Sửa thông tin truyện
         </Button>
         <Button
           className={`w-full rounded-md m-0 p-0 font-semibold text-base shadow-md bg-red-500 transition ease-in-out hover:scale-[1.01] text-white py-6`}
@@ -373,13 +380,11 @@ export function EditAnime({ animeId }) {
             onOpen();
           }}
         >
-          Xóa phim
+          Xóa truyện
         </Button>
         {isLoading ? (
-          <div className="w-full h-full bg-gray-200 z-10 absolute top-0">
-            <div className="w-full h-screen flex items-center justify-center ">
-              <Loader />
-            </div>
+          <div className="w-full h-screen flex items-center justify-center bg-gray-200 z-10 absolute top-0">
+            <Loader />
           </div>
         ) : null}
       </div>

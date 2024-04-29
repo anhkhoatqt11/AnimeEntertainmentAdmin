@@ -18,62 +18,56 @@ import { Zoom } from "@/components/ui/zoom-image";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FileWithPath } from "react-dropzone";
 import toast, { Toaster } from "react-hot-toast";
-import { EpisodeItemCard } from "./EpisodeItemCard";
+import { ChapterItemCard } from "./ChapterItemCard";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { postRequest } from "@/lib/fetch";
-import { useAdvertisement } from "@/hooks/useAdvertisement";
+import { ImageList } from "@/components/ui/ImageList";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
-function AnimeEpisodeInformation({ props }) {
+function ComicChapterInformation({ props }) {
   const [defaultImage, setDefaultImage] = useState("");
   const [coverImage, setCoverImage] = React.useState([]);
-  const [episodeName, setEpisodeName] = useState("");
+  const [chapterName, setChapterName] = useState("");
   const [editMode, setEditMode] = useState(-1);
-  const [adList, setAdList] = useState();
-  const [adPick, setAdPick] = React.useState(new Set([]));
-  const [videoUrl, setVideoUrl] = useState("");
-  const [defaultAd, setDefaultAd] = useState("");
-  const [duration, setDuration] = useState(0);
+  const [contentImageFiles, setContentImagesFile] = useState([]);
+  let [content, setContent] = useState<string[]>([]);
+  const [unlockPrice, setUnlockPrice] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { fetchAllAdvertisements } = useAnimeEpisodes();
   const { startUpload } = useUploadThing("imageUploader");
 
-  useEffect(() => {
-    const fetchAdList = async () => {
-      await fetchAllAdvertisements().then((res) => {
-        setAdList(res);
-      });
-    };
-    fetchAdList();
-  }, []);
-
-  const addEpisode = async () => {
+  const addChapter = async () => {
+    console.log(props.detailChapterList);
     if (coverImage.length <= 0) {
-      toast.error("Tập phim phải có 1 hình bìa");
+      toast.error("Tập truyện phải có 1 hình bìa");
       return;
     }
-    if (!episodeName) {
-      toast.error("Vui lòng nhập tên tập phim");
+    if (!chapterName) {
+      toast.error("Vui lòng nhập tên tập truyện");
       return;
     }
-    if (!videoUrl) {
-      toast.error("Vui lòng tải video tập phim");
+    if (contentImageFiles.length < 2 && content.length < 2) {
+      toast.error("Nội dung tập truyện phải có tối thiểu 10 ảnh");
       return;
     }
-    if (adPick.size === 0) {
-      toast.error("Vui lòng chọn quảng cáo");
-      return;
-    }
-    if ((await updateAdList(adPick.currentKey, "")) === false) return;
 
     processData();
   };
 
+  const processImageFiles = (files) => {
+    setContent([]);
+    files?.map((item) => {
+      if (item !== null) {
+        content.push(item?.url);
+        setContent(content);
+      }
+    });
+  };
+
   const processData = async () => {
     setIsProcessing(true);
-    const [posterImage] = await Promise.all([
+    const [posterImage, contentImage] = await Promise.all([
       startUpload([...coverImage]).then((res) => {
         const formattedImages = res?.map((image) => ({
           id: image.key,
@@ -82,53 +76,78 @@ function AnimeEpisodeInformation({ props }) {
         }));
         return formattedImages ?? null;
       }),
+      startUpload([...contentImageFiles]).then((res) => {
+        const formattedImages = res?.map((image) => ({
+          id: image.key,
+          name: image.key.split("_")[1] ?? image.key,
+          url: image.url,
+        }));
+        return formattedImages ?? null;
+      }),
     ]);
-    props.setEpisodeList([
-      ...props.episodeList,
+    processImageFiles(contentImage);
+    props.setDetailChapterList([
+      ...props.detailChapterList,
       {
-        episodeName: episodeName,
+        chapterName: chapterName,
         coverImage: posterImage ? posterImage[0]?.url : "",
-        content: videoUrl,
-        advertisement: adPick.currentKey,
+        content: content,
+        unlockPrice: unlockPrice,
         views: 0,
-        totalTime: duration,
-
         isNew: true,
         isEditing: false,
         isDeleting: false,
       },
     ]);
+    console.log(props.detailChapterList);
     setCoverImage([]);
-    setEpisodeName("");
-    setVideoUrl("");
+    setChapterName("");
+    setContent([]);
+    setContentImagesFile([]);
     setDefaultImage("");
-    setDuration(0);
-    setAdPick(new Set([]));
+    setUnlockPrice(0);
     toast.success("Đã thêm tập mới");
     setIsProcessing(false);
     return;
   };
 
-  const editEpisode = async () => {
-    if (!episodeName) {
-      toast.error("Vui lòng nhập tên tập phim");
+  const editChapter = async () => {
+    if (!chapterName) {
+      toast.error("Vui lòng nhập tên tập truyện");
       return;
     }
-    if (!videoUrl) {
-      toast.error("Vui lòng tải video tập phim");
+    if (contentImageFiles.length < 2 && content.length < 2) {
+      toast.error("Nội dung tập truyện phải có tối thiểu 10 ảnh");
       return;
     }
-    if (adPick.size === 0) {
-      toast.error("Vui lòng chọn quảng cáo");
-      return;
-    }
-    if ((await updateAdList(adPick.currentKey, defaultAd)) === false) return;
     processEditData();
   };
 
   const processEditData = async () => {
-    console.log(defaultImage, episodeName, videoUrl);
     setIsProcessing(true);
+    if (contentImageFiles.length > 0) {
+      content?.map(async (url) => {
+        const parts = url?.split("/");
+        const keyPart = parts?.[parts.length - 1];
+        const imageKey = keyPart?.split("?")[0];
+        await postRequest({
+          endPoint: "/api/uploadthing/deleteImage",
+          formData: { imageKey },
+          isFormData: false,
+        });
+      });
+      const [contentImage] = await Promise.all([
+        startUpload([...contentImageFiles]).then((res) => {
+          const formattedImages = res?.map((image) => ({
+            id: image.key,
+            name: image.key.split("_")[1] ?? image.key,
+            url: image.url,
+          }));
+          return formattedImages ?? null;
+        }),
+      ]);
+      processImageFiles(contentImage);
+    }
     if (coverImage.length > 0) {
       const [posterImage] = await Promise.all([
         startUpload([...coverImage]).then((res) => {
@@ -148,17 +167,16 @@ function AnimeEpisodeInformation({ props }) {
         formData: { imageKey },
         isFormData: false,
       });
-      props.setEpisodeList(
-        props.episodeList.map((item, index) =>
+      props.setDetailChapterList(
+        props.detailChapterList.map((item, index) =>
           index === editMode
             ? {
                 ...item,
-                episodeName: episodeName,
+                chapterName: chapterName,
                 coverImage: posterImage ? posterImage[0]?.url : "",
-                content: videoUrl,
-                advertisement: adPick.currentKey,
+                content: content,
                 views: item.views,
-                totalTime: duration,
+                unlockPrice: unlockPrice,
                 isNew: !item.isEditing,
                 isEditing: item.isEditing,
                 isDeleting: false,
@@ -167,17 +185,16 @@ function AnimeEpisodeInformation({ props }) {
         )
       );
     } else {
-      props.setEpisodeList(
-        props.episodeList.map((item, index) =>
+      props.setDetailChapterList(
+        props.detailChapterList.map((item, index) =>
           index === editMode
             ? {
                 ...item,
-                episodeName: episodeName,
+                chapterName: chapterName,
                 coverImage: defaultImage,
-                content: videoUrl,
-                advertisement: adPick.currentKey,
+                content: content,
                 views: item.views,
-                totalTime: duration,
+                unlockPrice: unlockPrice,
                 isNew: !item.isEditing,
                 isEditing: item.isEditing,
                 isDeleting: false,
@@ -187,29 +204,29 @@ function AnimeEpisodeInformation({ props }) {
       );
     }
     setCoverImage([]);
-    setEpisodeName("");
-    setVideoUrl("");
+    setChapterName("");
+    setContent([]);
+    setContentImagesFile([]);
     setDefaultImage("");
-    setDuration(0);
-    setAdPick(new Set([]));
+    setUnlockPrice(0);
     setEditMode(-1);
-    toast.success("Đã sửa tập phim");
+    toast.success("Đã sửa tập truyện");
+    console.log(props.detailChapterList);
     setIsProcessing(false);
   };
 
-  const removeEpisode = async () => {
+  const removeChapter = async () => {
     setIsProcessing(true);
-    updateAdList("", defaultAd);
-    if (videoUrl !== "") {
-      const parts = videoUrl?.split("/");
+    content?.map(async (item) => {
+      const parts = item?.split("/");
       const keyPart = parts?.[parts.length - 1];
-      const videoKey = keyPart?.split("?")[0];
+      const imageKey = keyPart?.split("?")[0];
       await postRequest({
-        endPoint: "/api/uploadthing/deleteVideo",
-        formData: { videoKey },
+        endPoint: "/api/uploadthing/deleteImage",
+        formData: { imageKey },
         isFormData: false,
       });
-    }
+    });
     if (defaultImage !== "") {
       const parts = defaultImage?.split("/");
       const keyPart = parts?.[parts.length - 1];
@@ -220,8 +237,8 @@ function AnimeEpisodeInformation({ props }) {
         isFormData: false,
       });
     }
-    props.setEpisodeList(
-      props.episodeList.map((item, index) =>
+    props.setDetailChapterList(
+      props.detailChapterList.map((item, index) =>
         index === editMode
           ? {
               ...item,
@@ -231,47 +248,19 @@ function AnimeEpisodeInformation({ props }) {
       )
     );
     setCoverImage([]);
-    setEpisodeName("");
-    setVideoUrl("");
+    setChapterName("");
+    setContent([]);
     setDefaultImage("");
-    setDuration(0);
-    setAdPick(new Set([]));
+    setUnlockPrice(0);
     setEditMode(-1);
-    toast.success("Đã xóa tập phim");
+    toast.success("Đã xóa tập truyện");
     setIsProcessing(false);
-  };
-
-  const updateAdList = async (id, idRemove) => {
-    if (id === idRemove) return true;
-
-    const adItem = adList?.filter((item) => item?._id === id);
-    if (adItem[0]?.amount - adItem[0]?.usedCount === 0) {
-      toast.error("Số lượt sử dụng quảng cáo đã đạt giới hạn");
-      return false;
-    }
-    setAdList(
-      adList?.map((item) =>
-        id !== "" && item?._id === id
-          ? {
-              ...item,
-              usedCount: item.usedCount + 1,
-            }
-          : idRemove !== "" && item?._id === idRemove
-          ? {
-              ...item,
-              usedCount: item.usedCount - 1,
-            }
-          : item
-      )
-    );
-
-    return true;
   };
 
   return (
     <div className="grid-cols-1 grid gap-4 mb-6 mt-5">
       <Toaster />
-      <h1 className="font-semibold text-xl">Danh sách tập phim</h1>
+      <h1 className="font-semibold text-xl">Danh sách tập truyện</h1>
       <div className="flex flex-col gap-3 w-full rounded bg-white p-4">
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="flex flex-col gap-3 w-full lg:w-[70%]">
@@ -298,17 +287,17 @@ function AnimeEpisodeInformation({ props }) {
               {/* ten phim */}
               <div className="flex flex-col gap-3 w-full">
                 <Label className="font-bold text-sm">
-                  Tên tập phim: <span className="text-red-500">*</span>
+                  Tên tập truyện: <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   className="w-full"
                   radius="sm"
                   variant="bordered"
                   size="md"
-                  value={episodeName}
-                  placeholder="Nhập tên tập phim"
+                  value={chapterName}
+                  placeholder="Nhập tên tập truyện"
                   onChange={(e) => {
-                    setEpisodeName(e.target.value);
+                    setChapterName(e.target.value);
                   }}
                 />
               </div>
@@ -318,95 +307,42 @@ function AnimeEpisodeInformation({ props }) {
               {/* ten phim */}
               <div className="flex flex-col gap-3 w-full">
                 <Label className="font-bold text-sm">
-                  Nội dung: <span className="text-red-500">*</span>
+                  {`Nội dung (Tối thiểu 10 hình - Tối đa 20 hình):`}{" "}
+                  <span className="text-red-500">*</span>
                 </Label>
-                <VideoUploader
-                  videoUrl={videoUrl}
-                  setVideoUrl={setVideoUrl}
-                  setDuration={setDuration}
-                  videoKey={undefined}
-                  setVideoKey={undefined}
-                />
+                <div className="flex flex-col gap-y-3 w-full">
+                  <div className="border-1 border-gray-400 w-full h-64 overflow-hidden rounded-md">
+                    {contentImageFiles?.length || content.length ? (
+                      <ImageList
+                        className={"w-full h-64"}
+                        files={contentImageFiles}
+                        defaultFiles={content}
+                        height={20}
+                        width={20}
+                      />
+                    ) : null}
+                  </div>
+                  <FileDialog
+                    name="images"
+                    maxFiles={20}
+                    maxSize={1024 * 1024 * 4}
+                    files={contentImageFiles}
+                    setFiles={setContentImagesFile}
+                    disabled={false}
+                  />
+                </div>
               </div>
             </div>
-            <Label className="font-bold text-sm">
-              Quảng cáo: <span className="text-red-500">*</span>
-            </Label>
-            {!adList ? (
-              <p>Loading</p>
-            ) : (
-              <Select
-                items={adList}
-                label="Quảng cáo"
-                radius="sm"
-                variant="bordered"
-                selectedKeys={adPick}
-                onSelectionChange={setAdPick}
-                classNames={{
-                  label: "group-data-[filled=true]:-translate-y-5",
-                  trigger: "min-h-20",
-                  listboxWrapper: "max-h-[400px]",
-                }}
-                listboxProps={{
-                  itemClasses: {
-                    base: [
-                      "rounded-md",
-                      "text-default-500",
-                      "transition-opacity",
-                      "data-[hover=true]:text-foreground",
-                      "data-[hover=true]:bg-default-100",
-                      "dark:data-[hover=true]:bg-default-50",
-                      "data-[selectable=true]:focus:bg-default-50",
-                      "data-[pressed=true]:opacity-70",
-                      "data-[focus-visible=true]:ring-default-500",
-                    ],
-                  },
-                }}
-                popoverProps={{
-                  classNames: {
-                    base: "before:bg-default-200",
-                    content: "p-0 border-small border-divider bg-background",
-                  },
-                }}
-                renderValue={(items) => {
-                  return items.map((item) => (
-                    <div className="flex gap-2 items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-small">{item?.data?._id}</span>
-                        <span className="text-tiny text-default-400">
-                          {item?.data?.representative}
-                        </span>
-                      </div>
-                    </div>
-                  ));
-                }}
-              >
-                {(ad) => (
-                  <SelectItem key={ad?._id} textValue={ad?._id}>
-                    <div className="flex gap-2 items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-small">{ad?._id}</span>
-                        <span className="text-tiny text-default-400">
-                          {ad?.representative}
-                        </span>
-                      </div>
-                      <div className="text-emerald-500 font-medium">
-                        {ad?.amount - ad?.usedCount} lượt
-                      </div>
-                    </div>
-                  </SelectItem>
-                )}
-              </Select>
-            )}
+
             {editMode === -1 ? (
               <Button
                 disabled={isProcessing}
                 className={`w-full bg-blue-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
                 onClick={() => {
-                  addEpisode();
+                  addChapter();
                 }}
               >
-                Thêm tập phim
+                Thêm tập truyện
               </Button>
             ) : (
               <div className="space-y-3">
@@ -414,16 +350,16 @@ function AnimeEpisodeInformation({ props }) {
                   disabled={isProcessing}
                   className={`w-full bg-emerald-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
                   onClick={() => {
-                    editEpisode();
+                    editChapter();
                   }}
                 >
-                  Sửa tập phim
+                  Sửa tập truyện
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     className={`w-full bg-red-400  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
                     onClick={() => {
-                      removeEpisode();
+                      removeChapter();
                     }}
                   >
                     Xóa tập
@@ -432,11 +368,10 @@ function AnimeEpisodeInformation({ props }) {
                     className={`w-full bg-[#dedede] text-black hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
                     onClick={() => {
                       setCoverImage([]);
-                      setEpisodeName("");
-                      setVideoUrl("");
-                      setDuration(0);
+                      setChapterName("");
+                      setContent([]);
+                      setUnlockPrice(0);
                       setDefaultImage("");
-                      setAdPick(new Set([]));
                       setEditMode(-1);
                       setCoverImage([]);
                     }}
@@ -449,18 +384,16 @@ function AnimeEpisodeInformation({ props }) {
           </div>
           <div className="flex flex-col gap-3 w-full lg:w-[30%]">
             <div className=" w-full h-full border-1 rounded overflow-hidden">
-              {props.episodeList.map((item, index) =>
+              {props.detailChapterList.map((item, index) =>
                 !item.isDeleting ? (
-                  <EpisodeItemCard
+                  <ChapterItemCard
                     id={index}
                     item={item}
-                    setEpisodeName={setEpisodeName}
+                    setChapterName={setChapterName}
                     setDefaultImage={setDefaultImage}
-                    setVideoUrl={setVideoUrl}
+                    setContent={setContent}
                     setEditMode={setEditMode}
-                    setDuration={setDuration}
-                    setAdPick={setAdPick}
-                    setDefaultAd={setDefaultAd}
+                    setUnlockPrice={setUnlockPrice}
                   />
                 ) : (
                   <></>
@@ -474,4 +407,4 @@ function AnimeEpisodeInformation({ props }) {
   );
 }
 
-export default AnimeEpisodeInformation;
+export default ComicChapterInformation;

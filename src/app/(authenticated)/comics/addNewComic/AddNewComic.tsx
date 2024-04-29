@@ -12,49 +12,62 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import AnimeInformation from "../(components)/AnimeInformation";
-import AnimeEpisodeInformation from "../(components)/AnimeEpisodeInformation";
+import ComicInformation from "../(components)/ComicInformation";
+import ComicChapterInformation from "../(components)/ComicChapterInformation";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
-import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
-import { useAnimes } from "@/hooks/useAnimes";
 import Loader from "@/components/Loader";
+import { useComicChapters } from "@/hooks/useComicChapters";
+import { useComics } from "@/hooks/useComics";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
-type AnimeEp = {
-  episodeName: string;
+type ComicChap = {
+  chapterName: string;
   coverImage: string;
-  content: string;
-  adLink: string;
-  advertisement: string;
+  publicTime: Date;
+  content: [];
   views: number;
-  totalTime: number;
+  comments: [];
+  likes: [];
+  unlockPrice: number;
+  userUnlocked: [];
 };
 
-export function AddNewAnime() {
+export function AddNewComic() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [landspaceImage, setLandspaceImage] = React.useState([]);
   const [coverImage, setCoverImage] = React.useState([]);
-  const [movieName, setMovieName] = React.useState("");
+  const [comicName, setComicName] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [genreSelected, setGenreSelected] = React.useState([]);
+  const [artist, setArtist] = React.useState("");
+  const [author, setAuthor] = React.useState("");
   const [publisher, setPublisher] = React.useState("");
   const [weeklyTime, setWeeklyTime] = React.useState("");
   const [ageFor, setAgeFor] = React.useState(new Set(["10+"]));
-  const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
-  const [episodeIdList, setEpisodeIdList] = useState([]);
+  const [detailChapterList, setDetailChapterList] = useState<ComicChap[]>([]);
+  const [chapterIdList, setChapterIdList] = useState([]);
   const { startUpload } = useUploadThing("imageUploader");
-  const { createNewEpisode } = useAnimeEpisodes();
-  const { createNewAnime } = useAnimes();
+  const { createNewChapter } = useComicChapters();
+  const { createNewComic } = useComics();
   const route = useRouter();
 
   const onSubmit = async () => {
     if (landspaceImage.length <= 0 || coverImage.length <= 0) {
-      toast.error("Phim bắt buộc phải có một ảnh bìa ngang và một ảnh bìa dọc");
+      toast.error(
+        "Truyện bắt buộc phải có một ảnh bìa ngang và một ảnh bìa dọc"
+      );
       return;
     }
-    if (!movieName || !description || !publisher || !weeklyTime) {
+    if (
+      !comicName ||
+      !description ||
+      !publisher ||
+      !author ||
+      !artist ||
+      !weeklyTime
+    ) {
       toast.error("Vui lòng nhập tất cả thông tin");
       return;
     }
@@ -84,54 +97,60 @@ export function AddNewAnime() {
         return formattedImages ?? null;
       }),
     ]);
-    episodeList.map((item, index) => {
+    detailChapterList.map((item, index) => {
+      console.log(item);
       const data = {
         coverImage: item.coverImage,
-        episodeName: item.episodeName,
-        totalTime: item.totalTime,
+        chapterName: item.chapterName,
         publicTime: new Date(),
         // *
         content: item.content,
         comments: [],
         likes: [], // list of user liked
         views: 0,
-        advertisement: item.advertisement,
+        unlockPrice: item.unlockPrice,
+        userUnlocked: [],
       };
-      createNewEpisode(data).then((res) => {
-        episodeIdList.push(res?._id);
-        if (index === episodeList.length - 1) {
+      createNewChapter(data).then((res) => {
+        chapterIdList.push(res?._id);
+        console.log(res?.chapterName);
+        if (index === detailChapterList.length - 1) {
           const data = {
             coverImage: posterImage ? posterImage[0]?.url : "",
             landspaceImage: landspacePoster ? landspacePoster[0]?.url : "",
-            movieName: movieName,
+            comicName: comicName,
+            author: author,
+            artist: artist,
             genres: genreSelected,
-            publishTime: weeklyTime,
+            newChapterTime: weeklyTime,
             ageFor: ageFor.currentKey,
             publisher: publisher,
             description: description,
-            episodes: episodeIdList,
+            chapterList: chapterIdList,
           };
-          createNewAnime(data).then((res) => {
-            toast.success("Đã thêm bộ phim mới thành công");
+          createNewComic(data).then((res) => {
+            toast.success("Đã thêm bộ truyện mới thành công");
             setIsLoading(false);
           });
         }
       });
     });
-    if (episodeList.length === 0) {
+    if (detailChapterList.length === 0) {
       const data = {
         coverImage: posterImage ? posterImage[0]?.url : "",
         landspaceImage: landspacePoster ? landspacePoster[0]?.url : "",
-        movieName: movieName,
+        comicName: comicName,
+        author: author,
+        artist: artist,
         genres: genreSelected,
-        publishTime: weeklyTime,
+        newChapterTime: weeklyTime,
         ageFor: ageFor.currentKey,
         publisher: publisher,
         description: description,
-        episodes: [],
+        chapterList: chapterIdList,
       };
-      createNewAnime(data).then((res) => {
-        toast.success("Đã thêm bộ phim mới thành công");
+      createNewComic(data).then((res) => {
+        toast.success("Đã thêm bộ truyện mới thành công");
         setIsLoading(false);
       });
     }
@@ -154,7 +173,7 @@ export function AddNewAnime() {
                 Xác nhận
               </ModalHeader>
               <ModalBody>
-                <p>Bạn có chắc chắn muốn tạo phim này</p>
+                <p>Bạn có chắc chắn muốn tạo truyện này</p>
               </ModalBody>
               <ModalFooter>
                 <Button
@@ -165,7 +184,7 @@ export function AddNewAnime() {
                     onSubmit();
                   }}
                 >
-                  Tạo phim
+                  Tạo truyện
                 </Button>
                 <Button color="primary" onPress={onClose}>
                   Hủy
@@ -176,16 +195,20 @@ export function AddNewAnime() {
         </ModalContent>
       </Modal>
       <div className="relative min-h-[1032px]">
-        <AnimeInformation
+        <ComicInformation
           props={{
             landspaceImage,
             setLandspaceImage,
             coverImage,
             setCoverImage,
-            movieName,
-            setMovieName,
+            comicName,
+            setComicName,
             description,
             setDescription,
+            artist,
+            setArtist,
+            author,
+            setAuthor,
             genreSelected,
             setGenreSelected,
             publisher,
@@ -197,10 +220,10 @@ export function AddNewAnime() {
             setIsLoading,
           }}
         />
-        <AnimeEpisodeInformation
+        <ComicChapterInformation
           props={{
-            episodeList,
-            setEpisodeList,
+            detailChapterList,
+            setDetailChapterList,
           }}
         />
         <Button
@@ -208,7 +231,7 @@ export function AddNewAnime() {
           radius="sm"
           onClick={onOpen}
         >
-          Tạo phim mới
+          Tạo truyện mới
         </Button>
         {isLoading ? (
           <div className="w-full h-full bg-gray-200 z-10 absolute top-0">

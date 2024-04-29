@@ -8,45 +8,45 @@ export const useComics = () => {
     return res;
   };
 
-  //   const fetchComicById = async (id) => {
-  //     const res = await getRequest({
-  //       endPoint: `/api/animes/animes-detail?animeId=${id}`,
-  //     });
-  //     return res;
-  //   };
+  const fetchComicById = async (id) => {
+    const res = await getRequest({
+      endPoint: `/api/comics/comics-detail?comicId=${id}`,
+    });
+    return res;
+  };
 
-  //   const createNewAnime = async (data) => {
-  //     const res = await postRequest({
-  //       endPoint: "/api/animes/animes-detail/add",
-  //       isFormData: false,
-  //       formData: data,
-  //     });
-  //     return res;
-  //   };
+  const createNewComic = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/comics/comics-detail/add",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
 
-  //   const editAnime = async (data) => {
-  //     const res = await postRequest({
-  //       endPoint: "/api/animes/animes-detail/edit",
-  //       isFormData: false,
-  //       formData: data,
-  //     });
-  //     return res;
-  //   };
+  const editComic = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/comics/comics-detail/edit",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
 
-  //   const deleteAnime = async (data) => {
-  //     const res = await postRequest({
-  //       endPoint: "/api/animes/animes-detail/delete",
-  //       isFormData: false,
-  //       formData: data,
-  //     });
-  //     return res;
-  //   };
+  const deleteComic = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/comics/comics-detail/delete",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
 
   return {
     fetchAllComics,
-    // fetchAnimeById,
-    // createNewAnime,
-    // editAnime,
-    // deleteAnime,
+    fetchComicById,
+    createNewComic,
+    editComic,
+    deleteComic,
   };
 };

@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 const comicsSchema = new Schema({
   coverImage: { type: String },
-  lanspaceImage: { type: String },
+  landspaceImage: { type: String },
   comicName: { type: String },
   author: { type: String },
   artist: { type: String },
