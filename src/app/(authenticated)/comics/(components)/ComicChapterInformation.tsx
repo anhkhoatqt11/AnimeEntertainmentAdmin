@@ -56,11 +56,17 @@ function ComicChapterInformation({ props }) {
   };
 
   const processImageFiles = (files) => {
+    console.log(content);
+    content = [];
     setContent([]);
-    files?.map((item) => {
+    files?.map((item, index) => {
       if (item !== null) {
         content.push(item?.url);
         setContent(content);
+      }
+      if (index === files.length - 1) {
+        setContentImagesFile([]);
+        console.log(content);
       }
     });
   };
@@ -85,6 +91,7 @@ function ComicChapterInformation({ props }) {
         return formattedImages ?? null;
       }),
     ]);
+    console.log(content);
     processImageFiles(contentImage);
     props.setDetailChapterList([
       ...props.detailChapterList,
@@ -99,6 +106,7 @@ function ComicChapterInformation({ props }) {
         isDeleting: false,
       },
     ]);
+    console.log(content);
     console.log(props.detailChapterList);
     setCoverImage([]);
     setChapterName("");
@@ -167,6 +175,7 @@ function ComicChapterInformation({ props }) {
         formData: { imageKey },
         isFormData: false,
       });
+      console.log(content);
       props.setDetailChapterList(
         props.detailChapterList.map((item, index) =>
           index === editMode
@@ -185,6 +194,7 @@ function ComicChapterInformation({ props }) {
         )
       );
     } else {
+      console.log(content);
       props.setDetailChapterList(
         props.detailChapterList.map((item, index) =>
           index === editMode

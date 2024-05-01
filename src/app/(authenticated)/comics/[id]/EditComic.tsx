@@ -200,6 +200,7 @@ export function EditComic({ comicId }) {
         } else {
           // editing from database
           const data = {
+            _id: item._id,
             coverImage: item.coverImage,
             chapterName: item.chapterName,
             unlockPrice: item.unlockPrice,
@@ -383,8 +384,10 @@ export function EditComic({ comicId }) {
           Xóa truyện
         </Button>
         {isLoading ? (
-          <div className="w-full h-screen flex items-center justify-center bg-gray-200 z-10 absolute top-0">
-            <Loader />
+          <div className="w-full h-full bg-gray-200 z-10 absolute top-0">
+            <div className="w-full h-screen flex items-center justify-center ">
+              <Loader />
+            </div>
           </div>
         ) : null}
       </div>

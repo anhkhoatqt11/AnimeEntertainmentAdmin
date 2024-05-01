@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   }
   const idList: mongoose.Types.ObjectId[] = [];
   const genreList: mongoose.Types.ObjectId[] = [];
-  body.episodes?.map((item) => {
+  body.chapterList?.map((item) => {
     idList.push(new mongoose.Types.ObjectId(item));
   });
   body.genres.map((item) => {
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   comic.artist = body.artist;
   comic.author = body.author;
   comic.genres = genreList;
-  comic.newChapterTime = body.newChapter;
+  comic.newChapterTime = body.newChapterTime;
   comic.ageFor = body.ageFor;
   comic.publisher = body.publisher;
   comic.description = body.description;
