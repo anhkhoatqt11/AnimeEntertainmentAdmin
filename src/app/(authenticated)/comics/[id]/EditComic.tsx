@@ -366,23 +366,25 @@ export function EditComic({ comicId }) {
             setDetailChapterList,
           }}
         />
-        <Button
-          className={`w-full rounded-md m-0 p-0 font-semibold text-base shadow-md bg-gradient-to-r from-[#A958FE] to-[#DA5EF0] transition ease-in-out hover:scale-[1.01] text-white py-6`}
-          radius="sm"
-          onClick={onOpen}
-        >
-          Sửa thông tin truyện
-        </Button>
-        <Button
-          className={`w-full rounded-md m-0 p-0 font-semibold text-base shadow-md bg-red-500 transition ease-in-out hover:scale-[1.01] text-white py-6`}
-          radius="sm"
-          onClick={() => {
-            setActionType(2);
-            onOpen();
-          }}
-        >
-          Xóa truyện
-        </Button>
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            className={`w-full bg-transparent border-2 border-emerald-500 text-emerald-500 m-0 p-0 font-medium text-sm hover:bg-emerald-500 transition ease-in-out hover:scale-[1.01] hover:text-white py-6`}
+            radius="sm"
+            onClick={onOpen}
+          >
+            Sửa thông tin truyện
+          </Button>
+          <Button
+            className={`w-full text-white bg-red-400 m-0 p-0 font-medium text-sm hover:bg-red-500 transition ease-in-out hover:scale-[1.01] hover:text-white py-6`}
+            radius="sm"
+            onClick={() => {
+              setActionType(2);
+              onOpen();
+            }}
+          >
+            Xóa truyện
+          </Button>
+        </div>
         {isLoading ? (
           <div className="w-full h-full bg-gray-200 z-10 absolute top-0">
             <div className="w-full h-screen flex items-center justify-center ">

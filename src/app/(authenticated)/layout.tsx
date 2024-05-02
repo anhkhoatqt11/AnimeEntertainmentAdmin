@@ -38,6 +38,11 @@ export default async function Layout({
       icon: <Book size={15} className="mr-2" />,
     },
     {
+      title: "Album",
+      value: "album",
+      icon: <Book size={15} className="mr-2" />,
+    },
+    {
       title: "Thử thách",
       value: "challenge",
       icon: <LucideGamepad size={15} className="mr-2" />,

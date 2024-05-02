@@ -347,7 +347,7 @@ function ComicChapterInformation({ props }) {
             {editMode === -1 ? (
               <Button
                 disabled={isProcessing}
-                className={`w-full bg-blue-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
+                className={`w-full hover:scale-[1.01] transition ease-in-out duration-500 font-medium py-6 text-sm`}
                 onClick={() => {
                   addChapter();
                 }}
@@ -358,7 +358,7 @@ function ComicChapterInformation({ props }) {
               <div className="space-y-3">
                 <Button
                   disabled={isProcessing}
-                  className={`w-full bg-emerald-500  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
+                  className={`w-full bg-transparent border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-white transition ease-in-out duration-500 font-medium py-6 text-sm`}
                   onClick={() => {
                     editChapter();
                   }}
@@ -367,7 +367,7 @@ function ComicChapterInformation({ props }) {
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
-                    className={`w-full bg-red-400  hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
+                    className={`w-full bg-red-400  hover:text-white hover:scale-[1.05] hover:bg-red-500 transition ease-in-out duration-500 font-medium py-6 text-sm`}
                     onClick={() => {
                       removeChapter();
                     }}
@@ -375,7 +375,7 @@ function ComicChapterInformation({ props }) {
                     Xóa tập
                   </Button>
                   <Button
-                    className={`w-full bg-[#dedede] text-black hover:text-white hover:scale-[1.01] transition ease-in-out duration-500 font-semibold py-6 text-base`}
+                    className={`w-full transition ease-in-out duration-500 font-medium py-6 text-sm`}
                     onClick={() => {
                       setCoverImage([]);
                       setChapterName("");
