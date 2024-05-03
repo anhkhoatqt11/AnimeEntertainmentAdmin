@@ -17,7 +17,6 @@ export function AlbumManagement() {
   useEffect(() => {
     const fetchAlbum = async () => {
       await fetchComicAlbum().then((res) => {
-        console.log(res);
         setComicAlbumList(res);
       });
       await fetchAnimeAlbum().then((res) => {
@@ -30,16 +29,22 @@ export function AlbumManagement() {
   return (
     <>
       <div className="relative min-h-[1032px]">
-        <ComicCollection comicAlbumList={comicAlbumList} />
+        <ComicCollection
+          comicAlbumList={comicAlbumList}
+          setComicAlbumList={setComicAlbumList}
+        />
         <Divider />
-        <AnimeCollection animeAlbumList={animeAlbumList} />
-        {/* {isLoading ? (
+        <AnimeCollection
+          animeAlbumList={animeAlbumList}
+          setAnimeAlbumList={setAnimeAlbumList}
+        />
+        {isLoading ? (
           <div className="w-full h-full bg-gray-200 z-10 absolute top-0">
             <div className="w-full h-screen flex items-center justify-center ">
               <Loader />
             </div>
           </div>
-        ) : null} */}
+        ) : null}
       </div>
     </>
   );

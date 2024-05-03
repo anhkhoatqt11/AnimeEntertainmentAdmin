@@ -227,7 +227,7 @@ export function AddNewComic() {
           }}
         />
         <Button
-          className={`w-full rounded-md m-0 p-0 font-semibold text-base shadow-md bg-gradient-to-r from-[#A958FE] to-[#DA5EF0] transition ease-in-out hover:scale-[1.01] text-white py-6`}
+          className={`w-full rounded-md m-0 p-0 font-medium text-sm shadow-md bg-gradient-to-r from-[#A958FE] to-[#DA5EF0] transition ease-in-out hover:scale-[1.01] text-white py-6`}
           radius="sm"
           onClick={onOpen}
         >
