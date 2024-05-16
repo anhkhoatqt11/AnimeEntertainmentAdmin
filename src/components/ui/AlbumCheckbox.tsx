@@ -9,7 +9,7 @@ export const AlbumCheckbox = ({ info, statusColor, value }) => {
       classNames={{
         base: cn(
           `inline-flex max-w-md ${
-            info.type === "comic" ? "w-[176px]" : "w-[268px]"
+            info.type === "comic" ? "w-[172px]" : "w-[260px]"
           } bg-content1 m-0`,
           "hover:bg-content2 items-start justify-start",
           "cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent",

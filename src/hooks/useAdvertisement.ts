@@ -8,6 +8,13 @@ export const useAdvertisement = () => {
     return res;
   };
 
+  const fetchEpisodeToShow = async () => {
+    const res = await getRequest({
+      endPoint: `/api/advertisements/list_episode`,
+    });
+    return res;
+  };
+
   const createAdvertisement = async (data) => {
     const res = await postRequest({
       endPoint: "/api/advertisements/add",
@@ -26,6 +33,15 @@ export const useAdvertisement = () => {
     return res;
   };
 
+  const processingOrder = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/advertisements/process_order",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
+
   const test = async () => {
     const res = await postRequest({
       endPoint: "/api/test",
@@ -37,8 +53,10 @@ export const useAdvertisement = () => {
 
   return {
     fetchAllAdvertisement,
+    fetchEpisodeToShow,
     createAdvertisement,
     editAdvertisement,
+    processingOrder,
     test,
   };
 };
