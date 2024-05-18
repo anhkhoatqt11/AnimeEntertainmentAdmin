@@ -3,7 +3,7 @@ import { AnimeManagement } from "./AnimeManagement";
 
 const page = () => {
   return (
-    <div className="w-full h-full bg-slate-100">
+    <div className="w-full h-full bg-[#F6F6F6]">
       <AnimeManagement />
     </div>
   );

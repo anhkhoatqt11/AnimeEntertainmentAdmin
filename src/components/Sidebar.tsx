@@ -204,7 +204,8 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
     return (
       <aside
         ref={forwardedRef}
-        className="px-6 min-w-[275px] max-w-[275px] flex flex-col gap-4 border-r border-slate-6 bg-[#28313A]"
+        // 28313A
+        className="px-6 min-w-[275px] max-w-[275px] flex flex-col gap-4 border-r border-slate-6 bg-white"
         {...props}
       >
         <nav className="flex flex-col gap-4">
@@ -225,16 +226,18 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
                           <Link
                             key={item.title}
                             href={`/${item.value}`}
-                            className="hover:bg-emerald-400 bg-transparent h-12 flex items-center"
+                            className="bg-transparent h-12 flex items-center"
                           >
                             <motion.span
                               className={classnames(
-                                "text-[14px] flex items-center font-semibold gap-2 w-full h-12 text-white relative transition ease-in-out duration-200 pl-2",
+                                "text-[14px] flex items-center border-l-3 font-semibold gap-2 w-full h-12 text-black relative transition ease-in-out duration-200 pl-6",
                                 {
-                                  "text-black": isCurrentPage,
-                                  "hover:text-black": title !== item.title,
+                                  "text-emerald-400 border-emerald-400":
+                                    isCurrentPage,
+                                  "hover:text-blue-500 hover:border-blue-500":
+                                    title !== item.title,
                                   "font-semibold": isCurrentPage,
-                                  "bg-emerald-400": isCurrentPage,
+                                  "border-emerald-400": isCurrentPage,
                                 }
                               )}
                             >
@@ -277,13 +280,13 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
                               <Link
                                 key={item.title}
                                 href={`/${item.value}`}
-                                className="hover:bg-emerald-400 h-12 flex items-center mx-2"
+                                className="h-12 flex items-center mx-2"
                               >
                                 <motion.span
                                   className={classnames(
-                                    "text-[16px] flex items-center font-bold gap-2 w-full pl-4 h-10 text-white relative transition ease-in-out duration-200",
+                                    "text-[16px] flex items-center font-bold gap-2 w-full pl-4 h-10 text-black relative transition ease-in-out duration-200",
                                     {
-                                      "text-white": isCurrentPage,
+                                      "text-emerald-400": isCurrentPage,
                                       "hover:text-slate-12":
                                         title !== item.title,
                                       "font-bold": isCurrentPage,

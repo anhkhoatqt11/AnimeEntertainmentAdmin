@@ -66,7 +66,7 @@ export const AdvertisementItemComponent = ({ props }) => {
           action: "edit",
         }}
       />
-      <div className="grid grid-cols-10 shadow-md rounded-md px-12 py-4 mb-4 ">
+      <div className="grid grid-cols-10 shadow-md rounded-md px-12 py-4 mb-4 bg-white">
         <div className="text-gray-600 col-span-3 text-sm flex align-middle items-center overflow-hidden text-ellipsis p-1">
           {props.orderId}
         </div>

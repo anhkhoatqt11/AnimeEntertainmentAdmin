@@ -44,6 +44,7 @@
     "@uploadthing/react": "^5.5.0",
     "autoprefixer": "10.4.15",
     "axios": "^1.5.0",
+    "chart.js": "^4.4.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
@@ -65,6 +66,7 @@
     "postcss": "8.4.28",
     "prisma": "^5.5.2",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-cropper": "^2.3.3",
     "react-day-picker": "^8.8.2",
     "react-dom": "^18",
@@ -94,7 +96,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@nextui-org/react": "^2.2.9",
+    "@nextui-org/react": "^2.3.6",
     "@types/node": "^20",
     "@types/numeral": "^2.0.5",
     "@types/react": "^18",

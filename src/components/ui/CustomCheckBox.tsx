@@ -10,7 +10,7 @@ const checkbox = tv({
   variants: {
     isSelected: {
       true: {
-        base: `border-[#DA5EF0] border-3 bg-gradient-to-r from-[#A958FE] to-[#DA5EF0]  text-white`,
+        base: `border-emerald-400 border-3 bg-gradient-to-r from-emerald-400 to-blue-500  text-white`,
         content: `text-primary-foreground pl-1 font-medium`,
       },
     },

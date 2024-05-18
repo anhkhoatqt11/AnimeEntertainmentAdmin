@@ -54,15 +54,17 @@ export default async function Layout({
     },
   ];
   return (
-    <div className="bg-[#3A4652]">
+    // 3A4652
+    <div className="bg-gray-50">
       <Header />
-      <div className="flex flex-col lg:flex-row items-start justify-between bg-[#28313A]">
+      {/* 28313A */}
+      <div className="flex flex-col lg:flex-row items-start justify-between bg-white">
         <Sidebar
           navItems={navItems}
           title="Navigation"
-          className="w-full lg:basis-1/4 bg-transparent"
+          className="w-full lg:basis-1/4 bg-transparent lg:z-10"
         />
-        <main className="w-full min-h-screen bg-slate-100">{children}</main>
+        <main className="w-full min-h-screen bg-[#F6F6F6]">{children}</main>
       </div>
       <Footer />
     </div>
