@@ -375,7 +375,6 @@ export default function UserTable() {
             topContent={topContent}
             topContentPlacement="outside"
             onSelectionChange={setSelectedKeys}
-            color="default"
           >
             <TableHeader columns={headerColumns}>
               {(column) => (
