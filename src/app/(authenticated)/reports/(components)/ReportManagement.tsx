@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -31,61 +32,76 @@ import Loader from "@/components/Loader";
 import { useUsers } from "@/hooks/useUsers";
 import { useQuery } from "@tanstack/react-query";
 import { useDisclosure } from "@nextui-org/modal";
-import { Toaster } from "react-hot-toast";
-import { BanUserModal } from "./BanUserModal";
+import toast, { Toaster } from "react-hot-toast";
+import { useReports } from "@/hooks/useReports";
+import { DotsVerticalIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 const statusColorMap = {
-  active: "success",
-  banned: "danger",
+  completed: "success",
+  pending: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["username", "id", "status", "actions"];
-
-const calculateStatus = (value) => {
-  var accessDate = new Date(value);
-  return accessDate.getTime() - Date.now() > 0 ? "banned" : "active";
-};
+const INITIAL_VISIBLE_COLUMNS = [
+  "reporter",
+  "reported",
+  "content",
+  "type",
+  "status",
+  "actions",
+];
 
 export default function UserTable() {
-  const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [userListPick, setUserListPick] = React.useState([]);
-  const [actionType, setActionType] = useState("");
+  const [reportListPick, setReportListPick] = React.useState([]);
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [statusFilter, setStatusFilter] = React.useState(new Set(["all"]));
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   // -----------------------------
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const { fetchAllUsers, editAccessCommentDate } = useUsers();
+  const router = useRouter();
+  const { fetchAllReport, editReportStatus, deleteRecord } = useReports();
 
   const { data, refetch } = useQuery({
     queryKey: [
       ["users", currentPage],
-      ["name", filterValue],
       ["status", statusFilter],
       ["limit", rowsPerPage],
     ],
-    queryFn: () =>
-      fetchAllUsers(currentPage, rowsPerPage, filterValue, statusFilter),
+    queryFn: () => fetchAllReport(currentPage, rowsPerPage, statusFilter),
     staleTime: 60 * 1000 * 1,
     keepPreviousData: true,
     onSuccess: () => {
       setIsLoaded(true);
+      console.log(data);
     },
   });
 
   useEffect(() => {
     refetch();
   }, []);
+
+  const onDeleteReport = async () => {
+    const data = {
+      reportList: reportListPick,
+    };
+    await deleteRecord(data);
+    toast.success("Xoá report thành công");
+    refetch();
+  };
+  const onCompletedReport = async (reportId) => {
+    const data = {
+      completedId: reportId,
+    };
+    await editReportStatus(data);
+    toast.success("Cập nhật thành công");
+    refetch();
+  };
   // ----------------------------
-
-  const hasSearchFilter = Boolean(filterValue);
-
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
@@ -94,66 +110,95 @@ export default function UserTable() {
     );
   }, [visibleColumns]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
+  const renderCell = React.useCallback((report, columnKey) => {
     switch (columnKey) {
-      case "username":
+      case "reporter":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.phone}
-            name={user.username}
+            avatarProps={{
+              src: report.userReportedInfo[0].avatar,
+            }}
+            description={report.userReportedInfo[0]._id}
+            name={report.userReportedInfo[0].username}
           >
-            {user.username}
+            {report.userReportedInfo[0].username}
           </User>
         );
-      case "id":
+      case "reported":
         return (
-          <div className="flex flex-col">
-            {/* <p className="text-bold text-small capitalize">{user._id}</p> */}
-            <p className="text-bold text-tiny capitalize text-default-400">
-              {user._id}
-            </p>
-          </div>
+          <User
+            avatarProps={{
+              src: report.userBeReportedInfo[0].avatar,
+            }}
+            description={report.userBeReportedInfo[0]._id}
+            name={report.userBeReportedInfo[0].username}
+          >
+            {report.userBeReportedInfo[0].username}
+          </User>
+        );
+      case "content":
+        return (
+          <p className="text-[13px] font-medium">{report.reportContent}</p>
+        );
+      case "type":
+        return (
+          <p className="text-[13px] text-gray-500">
+            {report.type === "comic" ? "Truyện" : "Anime"}
+          </p>
         );
       case "status":
         return (
           <Chip
-            className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[calculateStatus(user.accessCommentDate)]}
+            className="capitalize border-none gap-1 font-medium"
+            color={statusColorMap[report.status]}
             size="sm"
-            variant="dot"
+            variant="flat"
           >
-            {calculateStatus(user.accessCommentDate)}
+            {report.status}
           </Chip>
         );
       case "actions":
         return (
-          <div className="relative flex justify-start items-center gap-2">
-            {calculateStatus(user.accessCommentDate) === "active" ? (
-              <Button
-                radius="full"
-                className="bg-pink-500 text-white font-medium"
-                onClick={() => {
-                  setUserListPick([user?._id]);
-                  setActionType("ban");
-                  onOpen();
-                }}
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown className="bg-background border-1 border-default-200">
+              <DropdownTrigger>
+                <Button isIconOnly radius="full" size="sm" variant="light">
+                  <DotsVerticalIcon className="text-default-400" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disabledKeys={
+                  report.status === "completed" ? ["handle", "completed"] : []
+                }
               >
-                Cấm bình luận
-              </Button>
-            ) : (
-              <Button
-                className="bg-emerald-400 text-white font-medium"
-                radius="full"
-                onClick={() => {
-                  setUserListPick([user?._id]);
-                  setActionType("open");
-                  onOpen();
-                }}
-              >
-                Mở bình luận
-              </Button>
-            )}
+                <DropdownItem
+                  onClick={() => {
+                    router.push(`/reports/report-processing/${report._id}`);
+                  }}
+                  key={"handle"}
+                >
+                  Xử lý
+                </DropdownItem>
+
+                <DropdownItem
+                  key={"completed"}
+                  onClick={() => {
+                    onCompletedReport(report._id);
+                  }}
+                >
+                  Hoàn thành
+                </DropdownItem>
+
+                <DropdownItem
+                  onClick={() => {
+                    setReportListPick([report._id]);
+                    onOpen();
+                  }}
+                >
+                  Xóa
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         );
     }
@@ -176,34 +221,43 @@ export default function UserTable() {
     setCurrentPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-      setCurrentPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
-
   const onClear = React.useCallback(() => {
-    setFilterValue("");
     setCurrentPage(1);
   }, []);
 
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">
+            Tổng cộng {data?.totalItems} đơn báo cáo
+          </span>
+          <div className="flex flex-row gap-3 ">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  size="sm"
+                  variant="flat"
+                >
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="single"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {capitalize(status.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -232,33 +286,9 @@ export default function UserTable() {
             </Dropdown>
           </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Tổng cộng {data?.totalItems} users
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Số users trên một trang:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    data?.totalItems,
-    onSearchChange,
-    hasSearchFilter,
-  ]);
+  }, [statusFilter, visibleColumns, onRowsPerPageChange, data?.totalItems, ,]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -271,29 +301,13 @@ export default function UserTable() {
                 onClick={() => {
                   // setUserListPick(selectedKeys.entries);
                   selectedKeys.forEach((item) => {
-                    userListPick.push(item);
+                    reportListPick.push(item);
                   });
-                  setActionType("ban");
-                  setUserListPick(userListPick);
+                  setReportListPick(reportListPick);
                   onOpen();
                 }}
               >
-                Cấm
-              </Button>
-              <p className="text-blue-500">/</p>
-              <Button
-                className="bg-transparent font-semibold w-fit text-emerald-400 p-0"
-                onClick={() => {
-                  // setUserListPick(selectedKeys.entries);
-                  selectedKeys.forEach((item) => {
-                    userListPick.push(item);
-                  });
-                  setActionType("open");
-                  setUserListPick(userListPick);
-                  onOpen();
-                }}
-              >
-                Mở
+                Xóa
               </Button>
             </div>
           ) : (
@@ -302,7 +316,7 @@ export default function UserTable() {
           <span className="text-small text-default-400">
             {selectedKeys === "all"
               ? "Đã chọn tất cả"
-              : `${selectedKeys.size} trên ${data?.data.length} user đã chọn`}
+              : `${selectedKeys.size} trên ${data?.data.length} report đã chọn`}
           </span>
         </div>
         <Pagination
@@ -334,13 +348,7 @@ export default function UserTable() {
         </div>
       </div>
     );
-  }, [
-    selectedKeys,
-    data?.totalItems,
-    currentPage,
-    data?.totalPages,
-    hasSearchFilter,
-  ]);
+  }, [selectedKeys, data?.totalItems, currentPage, data?.totalPages]);
 
   return (
     <div>
@@ -351,16 +359,35 @@ export default function UserTable() {
       ) : (
         <>
           <Toaster />
-          <BanUserModal
-            props={{
-              isOpen,
-              onOpen,
-              onOpenChange,
-              userListPick,
-              actionType,
-              refetch,
-            }}
-          />
+          <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Xác nhận
+                  </ModalHeader>
+                  <ModalBody>
+                    <p>Bạn có chắc chắn muốn xóa những report này</p>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color="success"
+                      variant="ghost"
+                      onClick={() => {
+                        onClose();
+                        onDeleteReport();
+                      }}
+                    >
+                      Xóa report
+                    </Button>
+                    <Button color="primary" onClick={onClose}>
+                      Hủy
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
           <Table
             aria-label="All skylark users"
             isHeaderSticky
@@ -382,7 +409,7 @@ export default function UserTable() {
                 </TableColumn>
               )}
             </TableHeader>
-            <TableBody emptyContent={"No users found"} items={data?.data}>
+            <TableBody emptyContent={"No report found"} items={data?.data}>
               {(item) => (
                 <TableRow key={item?._id}>
                   {(columnKey) => (

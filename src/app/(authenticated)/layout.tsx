@@ -52,6 +52,11 @@ export default async function Layout({
       value: "advertisement",
       icon: <Book size={15} className="mr-2" />,
     },
+    {
+      title: "Đơn báo cáo",
+      value: "reports",
+      icon: <Book size={15} className="mr-2" />,
+    },
   ];
   return (
     // 3A4652
