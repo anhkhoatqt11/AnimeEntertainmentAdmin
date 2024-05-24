@@ -52,13 +52,13 @@ export function SearchAndCreateBar({ setSearchWord, setSort, setIsLoaded }) {
           onChange={(e) => setSearchKey(e.target.value)}
         />
         <Button
-          className="h-[40px] w-[0px] rounded-md m-0 p-0 -ml-[50px] min-w-unit-12 bg-white z-10 hover:bg-white"
+          className="h-[40px] w-[0px] rounded-md m-0 p-0 -mr-[0px] min-w-unit-12 bg-white z-10 hover:bg-white"
           onClick={searchSubmit}
         >
           <MagnifyingGlassIcon className={`h-6 w-6 text-[#3BE1AA]`} />
         </Button>
 
-        <Dropdown>
+        <Dropdown className="ml-6 mr-6">
           <DropdownTrigger>
             <Button
               variant={"outline"}

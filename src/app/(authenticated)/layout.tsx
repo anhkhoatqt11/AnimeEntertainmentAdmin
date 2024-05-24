@@ -2,11 +2,15 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Sidebar } from "@/components/Sidebar";
 import {
+  Album,
+  Bell,
   Book,
   ChevronDownIcon,
+  FileWarning,
   Home,
   ListVideo,
   LucideGamepad,
+  Megaphone,
   Menu,
   Mic2,
   Music,
@@ -24,7 +28,7 @@ export default async function Layout({
   const navItems = [
     {
       title: "Trang chủ",
-      value: "home",
+      value: "",
       icon: <Home size={15} className="mr-2" />,
     },
     {
@@ -40,7 +44,7 @@ export default async function Layout({
     {
       title: "Album",
       value: "album",
-      icon: <Book size={15} className="mr-2" />,
+      icon: <Album size={15} className="mr-2" />,
     },
     {
       title: "Thử thách",
@@ -50,12 +54,17 @@ export default async function Layout({
     {
       title: "Quảng cáo",
       value: "advertisement",
-      icon: <Book size={15} className="mr-2" />,
+      icon: <Megaphone size={15} className="mr-2" />,
+    },
+    {
+      title: "Gửi thông báo",
+      value: "notification",
+      icon: <Bell size={15} className="mr-2" />,
     },
     {
       title: "Đơn báo cáo",
       value: "reports",
-      icon: <Book size={15} className="mr-2" />,
+      icon: <FileWarning size={15} className="mr-2" />,
     },
   ];
   return (

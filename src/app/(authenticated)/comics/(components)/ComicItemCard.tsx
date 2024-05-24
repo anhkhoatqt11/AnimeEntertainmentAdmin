@@ -6,7 +6,7 @@ import { formatNumberWithDots } from "@/lib/utils";
 
 export default function ComicItemCard({ item }) {
   return (
-    <div className="flex flex-col overflow-hidden group shadow-lg bg-transparent border border-gray-50">
+    <div className="flex flex-col overflow-hidden group shadow-lg bg-transparent rounded-lg border border-gray-50">
       <Link href={`comics/${item?._id}`}>
         <div className="group relative overflow-hidden">
           <AspectRatio ratio={2 / 3}>

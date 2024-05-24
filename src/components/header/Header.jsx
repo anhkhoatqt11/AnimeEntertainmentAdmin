@@ -25,7 +25,11 @@ export default async function Component() {
     <div className="bg-gray-50 px-3 shadow-md hidden lg:block">
       <div className="flex h-16 w-full justify-between bg-gray-50 shrink-0 items-center">
         <Logo />
-        <div className="flex gap-2">
+        <div className="flex flex-row gap-2 items-center">
+          <div className="flex flex-col justify-end items-end">
+            <p className="font-medium text-[14px]">Quản trị viên</p>
+            <p className="text-[12px] text-gray-600">Alexandler Smith</p>
+          </div>
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>

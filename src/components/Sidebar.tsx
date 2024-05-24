@@ -219,8 +219,7 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
                     <LayoutGroup id="sidebar">
                       {navItems.map((item) => {
                         const pathName = usePathname();
-                        const lastPathname = pathName.split("/").pop();
-
+                        const lastPathname = pathName.split("/")[1];
                         const isCurrentPage = lastPathname === item.value;
                         return (
                           <Link
