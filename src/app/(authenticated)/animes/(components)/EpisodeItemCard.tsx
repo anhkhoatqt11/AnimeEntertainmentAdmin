@@ -10,8 +10,6 @@ export const EpisodeItemCard = ({
   setVideoUrl,
   setEditMode,
   setDuration,
-  setAdPick,
-  setDefaultAd,
 }) => {
   return (
     <div
@@ -22,8 +20,6 @@ export const EpisodeItemCard = ({
         setEpisodeName(item.episodeName);
         setDefaultImage(item.coverImage);
         setEditMode(id);
-        setAdPick(new Set([item.advertisement]));
-        setDefaultAd(item.advertisement);
       }}
     >
       <div className="flex flex-row pt-3 pr-3 pl-3 group">

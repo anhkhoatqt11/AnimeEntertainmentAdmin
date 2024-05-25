@@ -27,7 +27,6 @@ type AnimeEp = {
   episodeName: string;
   coverImage: string;
   content: string;
-  advertisement: string;
   views: number;
   totalTime: number;
   isNew: boolean;
@@ -75,7 +74,6 @@ export function EditAnime({ animeId }) {
             episodeName: item?.episodeName,
             coverImage: item?.coverImage,
             content: item?.content,
-            advertisement: item?.advertisement,
             views: item?.views,
             totalTime: item?.totalTime,
             isNew: false,
@@ -177,7 +175,6 @@ export function EditAnime({ animeId }) {
             comments: [],
             likes: [],
             views: 0,
-            advertisement: item.advertisement,
           };
           createNewEpisode(data).then(async (res) => {
             episodeIdList.push(res?._id);
@@ -193,7 +190,6 @@ export function EditAnime({ animeId }) {
             episodeName: item.episodeName,
             totalTime: item.totalTime,
             content: item.content,
-            advertisement: item.advertisement,
           };
           editEpisode(data).then((res) => {
             if (index === episodeList.length - 1) {

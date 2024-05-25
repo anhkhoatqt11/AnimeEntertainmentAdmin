@@ -15,7 +15,7 @@ export const ChapterItemCard = ({
     <div
       className="relative group"
       onClick={() => {
-        setUnlockPrice(item.unlockPrice);
+        setUnlockPrice(item.unlockPrice.toString());
         setContent(item.content);
         setChapterName(item.chapterName);
         setDefaultImage(item.coverImage);

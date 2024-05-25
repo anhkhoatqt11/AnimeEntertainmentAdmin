@@ -33,7 +33,7 @@ function ComicChapterInformation({ props }) {
   const [editMode, setEditMode] = useState(-1);
   const [contentImageFiles, setContentImagesFile] = useState([]);
   let [content, setContent] = useState<string[]>([]);
-  const [unlockPrice, setUnlockPrice] = useState(0);
+  const [unlockPrice, setUnlockPrice] = useState("0");
   const [isProcessing, setIsProcessing] = useState(false);
   const { startUpload } = useUploadThing("imageUploader");
 
@@ -49,6 +49,12 @@ function ComicChapterInformation({ props }) {
     }
     if (contentImageFiles.length < 2 && content.length < 2) {
       toast.error("Nội dung tập truyện phải có tối thiểu 10 ảnh");
+      return;
+    }
+    try {
+      parseInt(unlockPrice);
+    } catch (err) {
+      toast.error("Vui lòng nhập đúng định dạng giá unlock truyện");
       return;
     }
 
@@ -99,7 +105,7 @@ function ComicChapterInformation({ props }) {
         chapterName: chapterName,
         coverImage: posterImage ? posterImage[0]?.url : "",
         content: content,
-        unlockPrice: unlockPrice,
+        unlockPrice: parseInt(unlockPrice),
         views: 0,
         isNew: true,
         isEditing: false,
@@ -113,7 +119,7 @@ function ComicChapterInformation({ props }) {
     setContent([]);
     setContentImagesFile([]);
     setDefaultImage("");
-    setUnlockPrice(0);
+    setUnlockPrice("0");
     toast.success("Đã thêm tập mới");
     setIsProcessing(false);
     return;
@@ -126,6 +132,12 @@ function ComicChapterInformation({ props }) {
     }
     if (contentImageFiles.length < 2 && content.length < 2) {
       toast.error("Nội dung tập truyện phải có tối thiểu 10 ảnh");
+      return;
+    }
+    try {
+      parseInt(unlockPrice);
+    } catch (err) {
+      toast.error("Vui lòng nhập đúng định dạng giá unlock truyện");
       return;
     }
     processEditData();
@@ -185,7 +197,7 @@ function ComicChapterInformation({ props }) {
                 coverImage: posterImage ? posterImage[0]?.url : "",
                 content: content,
                 views: item.views,
-                unlockPrice: unlockPrice,
+                unlockPrice: parseInt(unlockPrice),
                 isNew: !item.isEditing,
                 isEditing: item.isEditing,
                 isDeleting: false,
@@ -204,7 +216,7 @@ function ComicChapterInformation({ props }) {
                 coverImage: defaultImage,
                 content: content,
                 views: item.views,
-                unlockPrice: unlockPrice,
+                unlockPrice: parseInt(unlockPrice),
                 isNew: !item.isEditing,
                 isEditing: item.isEditing,
                 isDeleting: false,
@@ -218,7 +230,7 @@ function ComicChapterInformation({ props }) {
     setContent([]);
     setContentImagesFile([]);
     setDefaultImage("");
-    setUnlockPrice(0);
+    setUnlockPrice("0");
     setEditMode(-1);
     toast.success("Đã sửa tập truyện");
     console.log(props.detailChapterList);
@@ -261,7 +273,7 @@ function ComicChapterInformation({ props }) {
     setChapterName("");
     setContent([]);
     setDefaultImage("");
-    setUnlockPrice(0);
+    setUnlockPrice("0");
     setEditMode(-1);
     toast.success("Đã xóa tập truyện");
     setIsProcessing(false);
@@ -274,14 +286,18 @@ function ComicChapterInformation({ props }) {
       <div className="flex flex-col gap-3 w-full rounded bg-white p-4">
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="flex flex-col gap-3 w-full lg:w-[70%]">
-            <div className=" w-full h-41 border-1 rounded">
-              <img
-                src={
-                  coverImage[0]?.preview || coverImage[0]?.url || defaultImage
-                }
-                alt={coverImage[0]?.name || defaultImage}
-                className={`h-[360px] w-full rounded-md object-cover object-center`}
-              />
+            <div className=" w-full h-[360px] border-1 rounded">
+              {coverImage[0]?.preview || coverImage[0]?.url || defaultImage ? (
+                <img
+                  src={
+                    coverImage[0]?.preview || coverImage[0]?.url || defaultImage
+                  }
+                  alt={coverImage[0]?.name || defaultImage}
+                  className={`h-[360px] w-full rounded-md object-cover object-center`}
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <FileDialog
               name="images"
@@ -312,9 +328,28 @@ function ComicChapterInformation({ props }) {
                 />
               </div>
             </div>
-            {/* mo ta */}
-            <div className="gap-6">
+
+            <div className="gap-6 mt-6">
               {/* ten phim */}
+              <div className="flex flex-col gap-3 w-full">
+                <Label className="font-bold text-sm">
+                  Giá unlock chương: <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  className="w-full"
+                  radius="sm"
+                  variant="bordered"
+                  size="md"
+                  value={unlockPrice}
+                  placeholder="Nhập tên tập truyện"
+                  onChange={(e) => {
+                    setUnlockPrice(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="gap-6">
               <div className="flex flex-col gap-3 w-full">
                 <Label className="font-bold text-sm">
                   {`Nội dung (Tối thiểu 10 hình - Tối đa 20 hình):`}{" "}
@@ -380,7 +415,7 @@ function ComicChapterInformation({ props }) {
                       setCoverImage([]);
                       setChapterName("");
                       setContent([]);
-                      setUnlockPrice(0);
+                      setUnlockPrice("0");
                       setDefaultImage("");
                       setEditMode(-1);
                       setCoverImage([]);

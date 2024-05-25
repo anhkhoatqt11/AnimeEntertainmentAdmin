@@ -26,7 +26,6 @@ type AnimeEp = {
   coverImage: string;
   content: string;
   adLink: string;
-  advertisement: string;
   views: number;
   totalTime: number;
 };
@@ -95,7 +94,6 @@ export function AddNewAnime() {
         comments: [],
         likes: [], // list of user liked
         views: 0,
-        advertisement: item.advertisement,
       };
       createNewEpisode(data).then((res) => {
         episodeIdList.push(res?._id);

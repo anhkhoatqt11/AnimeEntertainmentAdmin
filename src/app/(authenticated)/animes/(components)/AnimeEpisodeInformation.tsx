@@ -23,7 +23,6 @@ import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { VideoUploader } from "@/components/videoUpload/VideoUploader";
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes";
 import { postRequest } from "@/lib/fetch";
-import { useAdvertisement } from "@/hooks/useAdvertisement";
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 function AnimeEpisodeInformation({ props }) {
@@ -32,22 +31,10 @@ function AnimeEpisodeInformation({ props }) {
   const [episodeName, setEpisodeName] = useState("");
   const [editMode, setEditMode] = useState(-1);
   const [adList, setAdList] = useState();
-  const [adPick, setAdPick] = React.useState(new Set([]));
   const [videoUrl, setVideoUrl] = useState("");
-  const [defaultAd, setDefaultAd] = useState("");
   const [duration, setDuration] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { fetchAllAdvertisements } = useAnimeEpisodes();
   const { startUpload } = useUploadThing("imageUploader");
-
-  useEffect(() => {
-    const fetchAdList = async () => {
-      await fetchAllAdvertisements().then((res) => {
-        setAdList(res);
-      });
-    };
-    fetchAdList();
-  }, []);
 
   const addEpisode = async () => {
     if (coverImage.length <= 0) {
@@ -62,11 +49,6 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng tải video tập phim");
       return;
     }
-    if (adPick.size === 0) {
-      toast.error("Vui lòng chọn quảng cáo");
-      return;
-    }
-    if ((await updateAdList(adPick.currentKey, "")) === false) return;
 
     processData();
   };
@@ -89,10 +71,8 @@ function AnimeEpisodeInformation({ props }) {
         episodeName: episodeName,
         coverImage: posterImage ? posterImage[0]?.url : "",
         content: videoUrl,
-        advertisement: adPick.currentKey,
         views: 0,
         totalTime: duration,
-
         isNew: true,
         isEditing: false,
         isDeleting: false,
@@ -103,7 +83,6 @@ function AnimeEpisodeInformation({ props }) {
     setVideoUrl("");
     setDefaultImage("");
     setDuration(0);
-    setAdPick(new Set([]));
     toast.success("Đã thêm tập mới");
     setIsProcessing(false);
     return;
@@ -118,11 +97,6 @@ function AnimeEpisodeInformation({ props }) {
       toast.error("Vui lòng tải video tập phim");
       return;
     }
-    if (adPick.size === 0) {
-      toast.error("Vui lòng chọn quảng cáo");
-      return;
-    }
-    if ((await updateAdList(adPick.currentKey, defaultAd)) === false) return;
     processEditData();
   };
 
@@ -156,7 +130,6 @@ function AnimeEpisodeInformation({ props }) {
                 episodeName: episodeName,
                 coverImage: posterImage ? posterImage[0]?.url : "",
                 content: videoUrl,
-                advertisement: adPick.currentKey,
                 views: item.views,
                 totalTime: duration,
                 isNew: !item.isEditing,
@@ -175,7 +148,6 @@ function AnimeEpisodeInformation({ props }) {
                 episodeName: episodeName,
                 coverImage: defaultImage,
                 content: videoUrl,
-                advertisement: adPick.currentKey,
                 views: item.views,
                 totalTime: duration,
                 isNew: !item.isEditing,
@@ -191,7 +163,6 @@ function AnimeEpisodeInformation({ props }) {
     setVideoUrl("");
     setDefaultImage("");
     setDuration(0);
-    setAdPick(new Set([]));
     setEditMode(-1);
     toast.success("Đã sửa tập phim");
     setIsProcessing(false);
@@ -199,7 +170,6 @@ function AnimeEpisodeInformation({ props }) {
 
   const removeEpisode = async () => {
     setIsProcessing(true);
-    updateAdList("", defaultAd);
     if (videoUrl !== "") {
       const parts = videoUrl?.split("/");
       const keyPart = parts?.[parts.length - 1];
@@ -235,37 +205,9 @@ function AnimeEpisodeInformation({ props }) {
     setVideoUrl("");
     setDefaultImage("");
     setDuration(0);
-    setAdPick(new Set([]));
     setEditMode(-1);
     toast.success("Đã xóa tập phim");
     setIsProcessing(false);
-  };
-
-  const updateAdList = async (id, idRemove) => {
-    if (id === idRemove) return true;
-
-    const adItem = adList?.filter((item) => item?._id === id);
-    if (adItem[0]?.amount - adItem[0]?.usedCount === 0) {
-      toast.error("Số lượt sử dụng quảng cáo đã đạt giới hạn");
-      return false;
-    }
-    setAdList(
-      adList?.map((item) =>
-        id !== "" && item?._id === id
-          ? {
-              ...item,
-              usedCount: item.usedCount + 1,
-            }
-          : idRemove !== "" && item?._id === idRemove
-          ? {
-              ...item,
-              usedCount: item.usedCount - 1,
-            }
-          : item
-      )
-    );
-
-    return true;
   };
 
   return (
@@ -275,14 +217,18 @@ function AnimeEpisodeInformation({ props }) {
       <div className="flex flex-col gap-3 w-full rounded bg-white p-4">
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="flex flex-col gap-3 w-full lg:w-[70%]">
-            <div className=" w-full h-41 border-1 rounded">
-              <img
-                src={
-                  coverImage[0]?.preview || coverImage[0]?.url || defaultImage
-                }
-                alt={coverImage[0]?.name || defaultImage}
-                className={`h-[360px] w-full rounded-md object-cover object-center`}
-              />
+            <div className=" w-full h-[360px] border-1 rounded">
+              {coverImage[0]?.preview || coverImage[0]?.url || defaultImage ? (
+                <img
+                  src={
+                    coverImage[0]?.preview || coverImage[0]?.url || defaultImage
+                  }
+                  alt={coverImage[0]?.name || defaultImage}
+                  className={`h-[360px] w-full rounded-md object-cover object-center`}
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <FileDialog
               name="images"
@@ -329,75 +275,6 @@ function AnimeEpisodeInformation({ props }) {
                 />
               </div>
             </div>
-            <Label className="font-bold text-sm">
-              Quảng cáo: <span className="text-red-500">*</span>
-            </Label>
-            {!adList ? (
-              <p>Loading</p>
-            ) : (
-              <Select
-                items={adList}
-                label="Quảng cáo"
-                radius="sm"
-                variant="bordered"
-                selectedKeys={adPick}
-                onSelectionChange={setAdPick}
-                classNames={{
-                  label: "group-data-[filled=true]:-translate-y-5",
-                  trigger: "min-h-20",
-                  listboxWrapper: "max-h-[400px]",
-                }}
-                listboxProps={{
-                  itemClasses: {
-                    base: [
-                      "rounded-md",
-                      "text-default-500",
-                      "transition-opacity",
-                      "data-[hover=true]:text-foreground",
-                      "data-[hover=true]:bg-default-100",
-                      "dark:data-[hover=true]:bg-default-50",
-                      "data-[selectable=true]:focus:bg-default-50",
-                      "data-[pressed=true]:opacity-70",
-                      "data-[focus-visible=true]:ring-default-500",
-                    ],
-                  },
-                }}
-                popoverProps={{
-                  classNames: {
-                    base: "before:bg-default-200",
-                    content: "p-0 border-small border-divider bg-background",
-                  },
-                }}
-                renderValue={(items) => {
-                  return items.map((item) => (
-                    <div className="flex gap-2 items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-small">{item?.data?._id}</span>
-                        <span className="text-tiny text-default-400">
-                          {item?.data?.representative}
-                        </span>
-                      </div>
-                    </div>
-                  ));
-                }}
-              >
-                {(ad) => (
-                  <SelectItem key={ad?._id} textValue={ad?._id}>
-                    <div className="flex gap-2 items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-small">{ad?._id}</span>
-                        <span className="text-tiny text-default-400">
-                          {ad?.representative}
-                        </span>
-                      </div>
-                      <div className="text-emerald-500 font-medium">
-                        {ad?.amount - ad?.usedCount} lượt
-                      </div>
-                    </div>
-                  </SelectItem>
-                )}
-              </Select>
-            )}
             {editMode === -1 ? (
               <Button
                 disabled={isProcessing}
@@ -436,7 +313,6 @@ function AnimeEpisodeInformation({ props }) {
                       setVideoUrl("");
                       setDuration(0);
                       setDefaultImage("");
-                      setAdPick(new Set([]));
                       setEditMode(-1);
                       setCoverImage([]);
                     }}
@@ -459,8 +335,6 @@ function AnimeEpisodeInformation({ props }) {
                     setVideoUrl={setVideoUrl}
                     setEditMode={setEditMode}
                     setDuration={setDuration}
-                    setAdPick={setAdPick}
-                    setDefaultAd={setDefaultAd}
                   />
                 ) : (
                   <></>

@@ -10,7 +10,6 @@ export async function POST(req: Request) {
   episode.episodeName = body.episodeName;
   episode.totalTime = body.totalTime;
   episode.content = body.content;
-  episode.advertisements = body.advertisement;
   await episode?.save();
   if (episode) {
     return new Response(JSON.stringify(episode), { status: 200 });
