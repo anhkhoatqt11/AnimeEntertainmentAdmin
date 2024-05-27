@@ -1,17 +1,30 @@
-import prisma from '@/lib/prisma';
-import QuestionModel from '@/model/questions';
-import mongoose from 'mongoose';
-export async function POST(req: Request){
-    const body = await req.json();
+import prisma from "@/lib/prisma";
+import ChallengesModel from "@/model/challenges";
+import mongoose from "mongoose";
+export async function POST(req: Request) {
+  const body = await req.json();
 
-    const question = await QuestionModel.create({
-        questionName: body.questionName,
-        answers: body.answers,
-        correctAnswerID: body.correctAnswerID,
-        mediaUrl: body.mediaUrl,
-    });
-
-    if (question) {
-        return new Response(JSON.stringify(question), { status: 200 });
+  const question = await ChallengesModel.updateMany(
+    {},
+    {
+      $push: {
+        questionCollection: {
+          questionId: new mongoose.Types.ObjectId(),
+          questionName: body.questionName,
+          answers: body.answers,
+          correctAnswerID: body.correctAnswerID,
+          mediaUrl: body.mediaUrl,
+        },
+      },
+    },
+    {
+      //options
+      returnNewDocument: true,
+      new: true,
+      strict: false,
     }
+  );
+  if (question) {
+    return new Response(JSON.stringify(question), { status: 200 });
+  }
 }

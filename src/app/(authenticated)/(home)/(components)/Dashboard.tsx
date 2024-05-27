@@ -147,8 +147,8 @@ export function Dashboard() {
         </div>
       </div>
       <div className="flex flex-col md:flex-row">
-        {/* <LineChart chartData={chartDataLine} /> */}
-        {/* <DoughnutChart chartData={chartDataDoughnut} /> */}
+        {/* <LineChart chartData={chartDataLine} />
+        <DoughnutChart chartData={chartDataDoughnut} /> */}
         {/* </div> */}
       </div>
       <div className="font-medium text-xl p-3">Customers</div>

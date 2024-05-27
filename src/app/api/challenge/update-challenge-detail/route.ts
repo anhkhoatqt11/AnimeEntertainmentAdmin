@@ -4,13 +4,13 @@ import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const question = await ChallengesModel.updateMany(
+
+  const challenge = await ChallengesModel.updateMany(
     {},
     {
-      $pull: {
-        questionCollection: {
-          questionId: new mongoose.Types.ObjectId(body.questionId),
-        },
+      $set: {
+        challengeName: body.challengeName,
+        endTime: body.endTime,
       },
     },
     {
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       strict: false,
     }
   );
-  return new Response(JSON.stringify({ message: "Success" }), {
-    status: 200,
-  });
+  if (challenge) {
+    return new Response(JSON.stringify(challenge), { status: 200 });
+  }
 }
