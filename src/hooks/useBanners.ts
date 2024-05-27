@@ -23,10 +23,20 @@ export const useBanners = () => {
         return res;
     };
 
+    const editBanner = async (data) => {
+        const res = await postRequest({
+            endPoint: "/api/banners/edit",
+            isFormData: false,
+            formData: data,
+        });
+        return res;
+    }
+
 
     return {
         fetchBanners,
         fetchComicList,
-        fetchAnimeList
+        fetchAnimeList,
+        editBanner
     }
 }

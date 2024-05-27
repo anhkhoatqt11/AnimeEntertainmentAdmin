@@ -16,6 +16,7 @@ import {
   Music,
   Play,
   RadioIcon,
+  RectangleHorizontal,
   SquareStack,
   User,
   Video,
@@ -65,6 +66,11 @@ export default async function Layout({
       title: "Đơn báo cáo",
       value: "reports",
       icon: <FileWarning size={15} className="mr-2" />,
+    },
+    {
+      title: "Banners",
+      value: "banners",
+      icon: <RectangleHorizontal size={15} className="mr-2" />,
     },
   ];
   return (

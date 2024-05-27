@@ -1,9 +1,14 @@
+"use client";
+
 import React from 'react';
 import ComicItem from '../../album/(components)/ComicItem';
 import AnimeItem from '../../album/(components)/AnimeItem';
 import { Button } from '@/components/ui/button';
+import { useRouter } from "next/navigation";
+
 
 function AlbumBannerCollection({ bannerList, setBannerList }) {
+    const router = useRouter();
     return (
         <div className="grid-cols-1 grid gap-4 mb-6">
             <div className="flex flex-col gap-2 md:flex-row md:justify-between items-end p-4 pb-0">
@@ -25,6 +30,7 @@ function AlbumBannerCollection({ bannerList, setBannerList }) {
                             <Button
                                 className={`w-full bg-transparent border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-white  transition ease-in-out duration-500 font-medium py-6 text-sm`}
                                 onClick={() => {
+                                    router.push('banners/edit-comics');
                                 }}
                             >
                                 Sửa banner
@@ -52,6 +58,7 @@ function AlbumBannerCollection({ bannerList, setBannerList }) {
                             <Button
                                 className={`w-full bg-transparent border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-white  transition ease-in-out duration-500 font-medium py-6 text-sm`}
                                 onClick={() => {
+                                    router.push('banners/edit-animes');
                                 }}
                             >
                                 Sửa banner

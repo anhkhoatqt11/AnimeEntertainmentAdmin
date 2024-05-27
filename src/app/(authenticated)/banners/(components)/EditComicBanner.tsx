@@ -13,26 +13,26 @@ import toast, { Toaster } from "react-hot-toast";
 import Loader from "@/components/Loader";
 
 
-export function EditAnimeBanner() {
+export function EditComicBanner() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [searchKey, setSearchKey] = useState("");
     const [copyList, setCopyList] = useState([]);
-    const { fetchAnimeList, fetchBanners, editBanner } = useBanners();
+    const { fetchComicList, fetchBanners, editBanner } = useBanners();
     const [groupSelected, setGroupSelected] = React.useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [choiceList, setChoiceList] = useState([]);
 
     useEffect(() => {
         const fetchList = async () => {
-            await fetchAnimeList().then((res) => {
+            await fetchComicList().then((res) => {
                 setCopyList(res);
                 setChoiceList(res);
             });
             await fetchBanners().then((res) => {
-                const animeIds = res?.flatMap(item =>
-                    item.list.filter(subItem => subItem.type === 'Anime').map(subItem => subItem._id)
+                const comicIds = res?.flatMap(item =>
+                    item.list.filter(subItem => subItem.type === 'Comic').map(subItem => subItem._id)
                 );
-                setGroupSelected(animeIds);
+                setGroupSelected(comicIds);
                 setIsLoading(false);
             });
         }
@@ -47,7 +47,7 @@ export function EditAnimeBanner() {
     const searchSubmit = () => {
         setCopyList(
             choiceList.filter((item) =>
-                item?.movieName.toLowerCase().includes(searchKey.toLowerCase())
+                item?.comicName.toLowerCase().includes(searchKey.toLowerCase())
             )
         );
 
@@ -60,7 +60,7 @@ export function EditAnimeBanner() {
         }
         setIsLoading(true);
         const data = {
-            _id: "65ffa3934e6a1a45dd86fb8e",
+            _id: "65f840bd3be42c25a6a39428",
             list: groupSelected,
         };
         await editBanner(data).then((res) => {
@@ -110,7 +110,7 @@ export function EditAnimeBanner() {
                         <div className="flex flex-col gap-3 w-full">
                             <div className="flex flex-col md:flex-row justify-between items-center">
                                 <Label className="font-bold text-sm">
-                                    Danh sách phim anime
+                                    Danh sách comic
                                     <span className="text-red-500">*</span>
                                 </Label>
                                 <div className="flex flex-row items-center">
@@ -118,7 +118,7 @@ export function EditAnimeBanner() {
                                         className="h-[52px] w-full md:w-[270px] bg-white"
                                         variant="bordered"
                                         radius="sm"
-                                        label={`Nhập tên anime ...`}
+                                        label={`Nhập tên comic ...`}
                                         onChange={(e) => setSearchKey(e.target.value)}
                                     />
                                     <Button
@@ -143,9 +143,9 @@ export function EditAnimeBanner() {
                                         <AlbumCheckbox
                                             value={item?._id}
                                             info={{
-                                                name: item?.movieName,
-                                                image: item?.landspaceImage,
-                                                type: `anime`,
+                                                name: item?.comicName,
+                                                image: item?.coverImage,
+                                                type: `comic`,
                                             }}
                                             statusColor="secondary"
                                         />
