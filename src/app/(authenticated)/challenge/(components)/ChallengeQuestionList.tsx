@@ -56,7 +56,6 @@ function ChallengeQuestionList({ props, isLoaded, setIsLoaded }) {
         0
       ),
     };
-    console.log(data);
     await editChallenge(data);
     toast.success("Chỉnh sửa thành công");
   };
@@ -111,7 +110,7 @@ function ChallengeQuestionList({ props, isLoaded, setIsLoaded }) {
                 size="lg"
                 onClick={onSavedChange}
               >
-                Lưu thay đổi
+                Bắt đầu thử thách mới
               </Button>
             </div>
           </div>

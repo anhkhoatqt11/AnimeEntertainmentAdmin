@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import ChallengesModel from "@/model/challenges";
+import UserModel from "@/model/users";
 import mongoose from "mongoose";
 
 export async function POST(req: Request) {
@@ -11,6 +12,20 @@ export async function POST(req: Request) {
       $set: {
         challengeName: body.challengeName,
         endTime: body.endTime,
+      },
+    },
+    {
+      //options
+      returnNewDocument: true,
+      new: true,
+      strict: false,
+    }
+  );
+  await UserModel.updateMany(
+    {},
+    {
+      $set: {
+        challenges: [],
       },
     },
     {
