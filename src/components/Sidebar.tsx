@@ -197,27 +197,41 @@ interface NavItem {
 interface SidebarProps extends RootProps {
   navItems: NavItem[];
   title?: string;
+  session?: any;
 }
 
 export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
-  ({ navItems, title, ...props }, forwardedRef) => {
+  ({ navItems, title, session, ...props }, forwardedRef) => {
+    const role = session?.user.role;
+
+    // Filter navItems based on user role
+    const filteredNavItems = navItems.filter(item => {
+      if (role === 'Admin') return true;
+      if (role === 'Editor') {
+        return ['' ,'animes', 'comics', 'challenge', 'album'].includes(item.value);
+      }
+      if (['Advertiser', 'Partner'].includes(role)) {
+        return item.value === 'advertisement';
+      }
+      return false;
+    });
+
     return (
       <aside
         ref={forwardedRef}
-        // 28313A
         className="px-6 min-w-[275px] max-w-[275px] flex flex-col gap-4 border-r border-slate-6 bg-white"
         {...props}
       >
         <nav className="flex flex-col gap-4">
           <Collapsible.Root defaultOpen>
-            {navItems && navItems.length > 0 && (
+            {filteredNavItems && filteredNavItems.length > 0 && (
               <>
                 <Collapsible.Content className="relative mt-3 lg:block hidden">
                   <div className="absolute left-2.5 w-px h-full bg-slate-6" />
 
                   <div className="flex flex-col truncate space-y-1">
                     <LayoutGroup id="sidebar">
-                      {navItems.map((item) => {
+                      {filteredNavItems.map((item) => {
                         const pathName = usePathname();
                         const lastPathname = pathName.split("/")[1];
                         const isCurrentPage = lastPathname === item.value;
@@ -273,7 +287,7 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
 
                       <div className="pb-2 flex flex-col truncate space-y-1">
                         <LayoutGroup id="sidebar">
-                          {navItems.map((item) => {
+                          {filteredNavItems.map((item) => {
                             const isCurrentPage = title === item.title;
                             return (
                               <Link

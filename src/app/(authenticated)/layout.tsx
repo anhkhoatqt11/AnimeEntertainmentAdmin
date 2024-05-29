@@ -91,6 +91,7 @@ export default async function Layout({
       {/* 28313A */}
       <div className="flex flex-col lg:flex-row items-start justify-between bg-white">
         <Sidebar
+          session={session}
           navItems={navItems}
           title="Navigation"
           className="w-full lg:basis-1/4 bg-transparent lg:z-10"
