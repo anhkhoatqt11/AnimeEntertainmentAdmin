@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import connectMongoDB from "@/lib/mongodb";
+import { AuthProvider } from "./AuthProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,9 +26,11 @@ export default function RootLayout({
       <body>
         <Providers>
           <QueryProvider>
-            {children}
+            <AuthProvider>
+              <Toaster />
+              {children}
+            </AuthProvider>
           </QueryProvider>
-          <Toaster />
         </Providers>
       </body>
     </html>

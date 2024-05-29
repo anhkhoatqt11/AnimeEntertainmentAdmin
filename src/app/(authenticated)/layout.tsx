@@ -9,6 +9,7 @@ import {
   FileWarning,
   Home,
   ListVideo,
+  LockIcon,
   LucideGamepad,
   Megaphone,
   Menu,
@@ -21,6 +22,9 @@ import {
   User,
   Video,
 } from "lucide-react";
+import { getSession, mustBeLoggedIn } from "@/lib/auth";
+
+
 export default async function Layout({
   children,
 }: {
@@ -72,11 +76,18 @@ export default async function Layout({
       value: "banners",
       icon: <RectangleHorizontal size={15} className="mr-2" />,
     },
+    {
+      title: "Người dùng",
+      value: "credentials",
+      icon: <LockIcon size={15} className="mr-2" />,
+    },
   ];
+  await mustBeLoggedIn();
+  const session = await getSession();
   return (
     // 3A4652
     <div className="bg-gray-50">
-      <Header />
+      <Header session={session} />
       {/* 28313A */}
       <div className="flex flex-col lg:flex-row items-start justify-between bg-white">
         <Sidebar

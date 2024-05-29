@@ -44,6 +44,7 @@
     "@uploadthing/react": "^5.5.0",
     "autoprefixer": "10.4.15",
     "axios": "^1.5.0",
+    "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -97,6 +98,8 @@
   },
   "devDependencies": {
     "@nextui-org/react": "^2.2.9",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/numeral": "^2.0.5",
     "@types/react": "^18",
