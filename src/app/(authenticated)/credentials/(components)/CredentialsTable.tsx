@@ -18,6 +18,10 @@ import {
     User,
     Pagination,
     DatePicker,
+    Tooltip,
+    Select,
+    CircularProgress,
+    SelectItem,
 } from "@nextui-org/react";
 import {
     Modal,
@@ -34,20 +38,26 @@ import { ChevronDownIcon, PlusIcon, SearchIcon } from "lucide-react";
 import Loader from "@/components/Loader";
 import { useQuery } from "@tanstack/react-query";
 import { useDisclosure } from "@nextui-org/modal";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useCredentials } from "@/hooks/useCredentials";
+import { CiEdit } from "react-icons/ci";
+import { CiLock, CiUnlock } from "react-icons/ci";
+
 
 const statusColorMap = {
     active: "success",
-    banned: "danger",
+    deactivated: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["username", "id", "status", "role" , "actions"];
-
-const calculateStatus = (value) => {
-    var accessDate = new Date(value);
-    return accessDate.getTime() - Date.now() > 0 ? "banned" : "active";
+const statusMap = {
+    active: "Đang hoạt động",
+    deactivated: "Vô hiệu hoá",
 };
+
+
+const INITIAL_VISIBLE_COLUMNS = ["username", "id", "status", "role", "actions"];
+
+
 
 export default function CredentialsTable() {
 
@@ -60,13 +70,23 @@ export default function CredentialsTable() {
     );
     const [statusFilter, setStatusFilter] = React.useState("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [userName, setUserName] = React.useState("");
+    const [role, setRole] = React.useState("");
+    const [currentUserId, setCurrentUserId] = React.useState("");
     // -----------------------------
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const [isLoaded, setIsLoaded] = React.useState(false);
     const [currentPage, setCurrentPage] = useState(1);
 
+    const roles = [
+        { key: 'Admin', label: 'Admin (Quản trị viên)' },
+        { key: 'Editor', label: 'Editor (Biên tập viên)' },
+        { Key: 'Partner', label: 'Partner (Đối tác)' },
+        { key: 'Advertiser', label: 'Advertiser (Nhà quảng cáo)' },
+    ]
 
-    const { fetchAllCredentials } = useCredentials();
+    const { fetchAllCredentials, updateCredentials } = useCredentials();
 
     const { data, refetch } = useQuery({
         queryKey: [
@@ -99,6 +119,26 @@ export default function CredentialsTable() {
         );
     }, [visibleColumns]);
 
+    const handleSelectionChange = (e) => {
+        setRole(e.target.value);
+    };
+
+    const onSubmit = async () => {
+        const data = {
+            username: userName,
+            role: role,
+        };
+        const res = await updateCredentials(data);
+        if (res) {
+            console.log("Cập nhật thành công");
+            toast.success("Cập nhật thành công");
+            refetch();
+        } else {
+            console.log("Cập nhật thất bại");
+            toast.error("Đã có lỗi xảy ra khi thực hiện cập nhật");
+        }
+    }
+
 
 
     const renderCell = React.useCallback((user, columnKey) => {
@@ -112,7 +152,6 @@ export default function CredentialsTable() {
             case "id":
                 return (
                     <div className="flex flex-col">
-                        {/* <p className="text-bold text-small capitalize">{user._id}</p> */}
                         <p className="text-bold text-tiny capitalize text-default-400">
                             {user._id}
                         </p>
@@ -120,52 +159,62 @@ export default function CredentialsTable() {
                 );
             case "status":
                 return (
-                    <div className="flex flex-col">
-                        {/* <p className="text-bold text-small capitalize">{user._id}</p> */}
-                        <p className="text-bold text-tiny capitalize text-default-400">
-                            {user.status}
-                        </p>
-                    </div>
+                    <Chip
+                        className="capitalize border-none gap-1 text-default-600"
+                        color={statusColorMap[user.status]}
+                        size="sm"
+                        variant="dot"
+                    >
+                        {statusMap[user.status]}
+                    </Chip>
                 );
             case "role":
                 return (
                     <div className="flex flex-col">
-                        {/* <p className="text-bold text-small capitalize">{user._id}</p> */}
                         <p className="text-bold text-tiny capitalize text-default-400">
                             {user.role}
                         </p>
                     </div>
                 );
-            // case "actions":
-            //     return (
-            //         <div className="relative flex justify-start items-center gap-2">
-            //             {calculateStatus(user.accessCommentDate) === "active" ? (
-            //                 <Button
-            //                     radius="full"
-            //                     className="bg-pink-500 text-white font-medium"
-            //                     onClick={() => {
-            //                         setUserListPick([user?._id]);
-            //                         setActionType("ban");
-            //                         onOpen();
-            //                     }}
-            //                 >
-            //                     Cấm bình luận
-            //                 </Button>
-            //             ) : (
-            //                 <Button
-            //                     className="bg-emerald-400 text-white font-medium"
-            //                     radius="full"
-            //                     onClick={() => {
-            //                         setUserListPick([user?._id]);
-            //                         setActionType("open");
-            //                         onOpen();
-            //                     }}
-            //                 >
-            //                     Mở bình luận
-            //                 </Button>
-            //             )}
-            //         </div>
-            //     );
+            case "actions":
+                return (
+                    <>
+                        <div className="flex flex-col">
+                            <div className="relative flex items-center gap-3">
+                                <Tooltip content="Sửa thông tin">
+                                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                        <CiEdit
+                                            className="w-6 h-6 text-blue-400"
+                                            onClick={() => {
+                                                setUserName(user.username);
+                                                setCurrentUserId(user._id);
+                                                setRole(user.role);
+                                                onOpen();
+                                            }}
+                                        />
+                                    </span>
+                                </Tooltip>
+                                {user.status === "Deactivate" ? (
+                                    <Tooltip color="primary" content="Kích hoạt tài khoản">
+                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                            <CiUnlock
+                                                className="w-6 h-6 text-emerald-400"
+                                            />
+                                        </span>
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip color="danger" content="Vô hiệu hoá">
+                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                            <CiLock
+                                                className="w-6 h-6 text-red-400"
+                                            />
+                                        </span>
+                                    </Tooltip>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                );
         }
     }, []);
 
@@ -285,12 +334,11 @@ export default function CredentialsTable() {
                                     selectedKeys.forEach((item) => {
                                         userListPick.push(item);
                                     });
-                                    // setActionType("ban");
                                     setUserListPick(userListPick);
                                     onOpen();
                                 }}
                             >
-                                Cấm
+                                Vô hiệu hoá
                             </Button>
                             <p className="text-blue-500">/</p>
                             <Button
@@ -300,12 +348,11 @@ export default function CredentialsTable() {
                                     selectedKeys.forEach((item) => {
                                         userListPick.push(item);
                                     });
-                                    // setActionType("open");
                                     setUserListPick(userListPick);
                                     onOpen();
                                 }}
                             >
-                                Mở
+                                Kích hoạt
                             </Button>
                         </div>
                     ) : (
@@ -363,16 +410,60 @@ export default function CredentialsTable() {
             ) : (
                 <>
                     <Toaster />
-                    {/* <BanUserModal
-                        props={{
-                            isOpen,
-                            onOpen,
-                            onOpenChange,
-                            userListPick,
-                            actionType,
-                            refetch,
-                        }}
-                    /> */}
+                    <Modal
+                        size={'md'}
+                        isOpen={isOpen}
+                        onClose={onClose}
+                    >
+                        <ModalContent>
+                            {(onClose) => (
+                                <>
+                                    <ModalHeader className="flex flex-col gap-1">Tạo tài khoản</ModalHeader>
+                                    <ModalBody>
+                                        <Input
+                                            label='Tên người dùng'
+                                            labelPlacement={'inside'}
+                                            placeholder="Nhập tên người dùng"
+                                            value={userName}
+                                            onValueChange={setUserName}
+                                        />
+                                        <Select
+                                            isRequired
+                                            onChange={handleSelectionChange}
+                                            label="Vai trò"
+                                            className="w-full"
+                                            selectedKeys={"Admin"}
+                                        >
+                                            {roles.map((role) => (
+                                                <SelectItem key={role.key}>
+                                                    {role.label}
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="danger" variant="light" onPress={onClose}>
+                                            Đóng
+                                        </Button>
+                                        <Button className='bg-blue-400 text-white' onPress={onSubmit}>
+                                            Chỉnh sửa thông tin
+                                        </Button>
+                                    </ModalFooter>
+                                    {isLoading ? (
+                                        <div className="w-full h-full flex justify-center bg-gray-200 z-10 absolute top-0">
+                                            <CircularProgress
+                                                color="success"
+                                                aria-label="Loading..."
+                                                classNames={{
+                                                    svg: "w-20 h-20 text-gray-600",
+                                                }}
+                                            />
+                                        </div>
+                                    ) : null}
+                                </>
+                            )}
+                        </ModalContent>
+                    </Modal>
                     <Table
                         aria-label="All skylark users"
                         isHeaderSticky

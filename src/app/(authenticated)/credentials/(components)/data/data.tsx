@@ -8,8 +8,8 @@ const columns = [
 ];
 
 const statusOptions = [
-  { name: "Hoạt động", uid: "active" },
-  { name: "Cấm bình luận", uid: "paused" },
+  { name: "Đang hoạt động", uid: "active" },
+  { name: "Vô hiệu hoá", uid: "deactivate" },
 ];
 
 export { columns, statusOptions };

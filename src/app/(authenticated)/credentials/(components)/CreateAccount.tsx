@@ -75,7 +75,7 @@ const CreateAccount = () => {
         <>
             <Toaster />
             <Modal
-                size={'2xl'}
+                size={'md'}
                 isOpen={isOpen}
                 onClose={onClose}
             >

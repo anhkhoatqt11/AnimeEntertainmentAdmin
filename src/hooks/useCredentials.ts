@@ -26,9 +26,19 @@ export const useCredentials = () => {
         });
         return res;
     }
+
+    const updateCredentials = async (data) => {
+        const res = await postRequest({
+            endPoint: "/api/credentials/edit",
+            isFormData: false,
+            formData: data,
+        });
+        return res;
+    }
     return {
         createNewCredential,
         checkIfUserExists,
-        fetchAllCredentials
+        fetchAllCredentials,
+        updateCredentials,
     }
 }

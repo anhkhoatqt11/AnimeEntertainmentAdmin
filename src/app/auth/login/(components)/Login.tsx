@@ -33,7 +33,6 @@ const formSchema = z.object({
 
 const Login = ({ className }: { className?: string }) => {
     const [isLoading, setIsLoading] = React.useState(false);
-    const [user, setUser] = React.useState(null);
     const router = useRouter();
     const [show, setShow] = React.useState({
         showPass: false,
@@ -85,18 +84,9 @@ const Login = ({ className }: { className?: string }) => {
         toast("Đăng xuất thành công", {
             description: "Bạn đã đăng xuất khỏi tài khoản của mình",
         });
-        setUser(null);
         router.refresh();
     }
 
-    if (user) {
-        return (
-            <div>
-                You already logged in.
-                <Button onClick={handleLogout}>Logout</Button>
-            </div>
-        )
-    }
 
     if (isLoading)
         return (
@@ -185,12 +175,12 @@ const Login = ({ className }: { className?: string }) => {
                         </form>
                     </Form>
                 </div>
-                <div className="mt-4 text-center text-sm">
+                {/* <div className="mt-4 text-center text-sm">
                     Quên mật khẩu?
                     <Link className="underline" href="#">
                         Liên hệ với Skylark
                     </Link>
-                </div>
+                </div> */}
             </div>
         </div>
     )

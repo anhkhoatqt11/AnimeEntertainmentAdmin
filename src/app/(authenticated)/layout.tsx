@@ -23,6 +23,7 @@ import {
   Video,
 } from "lucide-react";
 import { getSession, mustBeLoggedIn } from "@/lib/auth";
+import { BiMoney } from "react-icons/bi";
 
 
 export default async function Layout({
@@ -80,6 +81,11 @@ export default async function Layout({
       title: "Người dùng",
       value: "credentials",
       icon: <LockIcon size={15} className="mr-2" />,
+    },
+    {
+      title: "Donate",
+      value: "donate",
+      icon: <BiMoney size={15} className="mr-2" />,
     },
   ];
   await mustBeLoggedIn();

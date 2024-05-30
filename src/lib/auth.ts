@@ -5,14 +5,16 @@ import jwt from 'jsonwebtoken';
 
 export async function mustBeLoggedIn() {
     const session = await getServerSession(options);
-    console.log('session: ', session);
+    // console.log('session: ', session);
     if (!session) {
         redirect('/auth/login');
     }
 }
+
+
 export async function getSession() {
     const session = await getServerSession(options);
-    console.log(session);
+    // console.log(session);
     return session;
 }
 
