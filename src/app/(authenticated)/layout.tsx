@@ -16,6 +16,7 @@ import {
   Mic2,
   Music,
   Play,
+  Projector,
   RadioIcon,
   RectangleHorizontal,
   SquareStack,
@@ -23,7 +24,7 @@ import {
   Video,
 } from "lucide-react";
 import { getSession, mustBeLoggedIn } from "@/lib/auth";
-
+import { BiMoney } from "react-icons/bi";
 
 export default async function Layout({
   children,
@@ -47,9 +48,19 @@ export default async function Layout({
       icon: <Book size={15} className="mr-2" />,
     },
     {
+      title: "Banners",
+      value: "banners",
+      icon: <Projector size={15} className="mr-2" />,
+    },
+    {
       title: "Album",
       value: "album",
       icon: <Album size={15} className="mr-2" />,
+    },
+    {
+      title: "Donate",
+      value: "donate",
+      icon: <BiMoney size={15} className="mr-2" />,
     },
     {
       title: "Thử thách",
@@ -70,16 +81,6 @@ export default async function Layout({
       title: "Đơn báo cáo",
       value: "reports",
       icon: <FileWarning size={15} className="mr-2" />,
-    },
-    {
-      title: "Banners",
-      value: "banners",
-      icon: <RectangleHorizontal size={15} className="mr-2" />,
-    },
-    {
-      title: "Người dùng",
-      value: "credentials",
-      icon: <LockIcon size={15} className="mr-2" />,
     },
   ];
   await mustBeLoggedIn();

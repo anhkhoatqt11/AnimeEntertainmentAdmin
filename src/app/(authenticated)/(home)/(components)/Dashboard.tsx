@@ -12,6 +12,8 @@ import { useState } from "react";
 import { DoughnutChart } from "./DoughnutChart";
 import { LineChart } from "./LineChart";
 import UserTable from "./UserTable";
+import CreateAccount from "./CreateAccount";
+import CredentialsTable from "./CredentialsTable";
 Chart.register(CategoryScale);
 
 type propsLineDate = {
@@ -151,8 +153,11 @@ export function Dashboard() {
         <DoughnutChart chartData={chartDataDoughnut} /> */}
         {/* </div> */}
       </div>
-      <div className="font-medium text-xl p-3">Customers</div>
-      <UserTable />
+
+      <div className="font-medium text-xl p-3 pl-0 mt-3">
+        Người dùng Skylark mobile
+        <UserTable />
+      </div>
     </div>
   );
 }
