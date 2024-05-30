@@ -21,6 +21,7 @@ import {
   RectangleHorizontal,
   SquareStack,
   User,
+  User2Icon,
   Video,
 } from "lucide-react";
 import { getSession, mustBeLoggedIn } from "@/lib/auth";
@@ -36,6 +37,11 @@ export default async function Layout({
       title: "Trang chủ",
       value: "",
       icon: <Home size={15} className="mr-2" />,
+    },
+    {
+      title: "Người dùng",
+      value: "credentials",
+      icon: <User2Icon size={15} className="mr-2" />,
     },
     {
       title: "Animes",

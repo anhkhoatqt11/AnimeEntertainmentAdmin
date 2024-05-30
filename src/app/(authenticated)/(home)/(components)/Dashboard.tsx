@@ -12,8 +12,6 @@ import { useState } from "react";
 import { DoughnutChart } from "./DoughnutChart";
 import { LineChart } from "./LineChart";
 import UserTable from "./UserTable";
-import CreateAccount from "./CreateAccount";
-import CredentialsTable from "./CredentialsTable";
 Chart.register(CategoryScale);
 
 type propsLineDate = {
