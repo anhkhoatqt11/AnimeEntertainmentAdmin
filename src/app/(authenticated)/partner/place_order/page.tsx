@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { PlaceAdvertisement } from "./(components)/PlaceAdvertisement";
+import { getSession } from "@/lib/auth";
 
-const page = () => {
+const page = async () => {
+  const session = await getSession();
   return (
     <div className="w-full h-full bg-slate-100">
-      <PlaceAdvertisement />
+      <PlaceAdvertisement session={session} />
     </div>
   );
 };

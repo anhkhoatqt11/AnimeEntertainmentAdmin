@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -22,12 +22,12 @@ function AnimeEpisodeListComponent({
   setAnimeEpisodeList,
   groupSelected,
   setGroupSelected,
-  setSearchKey,
-  searchSubmit,
   videoUrl,
   setVideoUrl,
   linkUrl,
   setLinkUrl,
+  totalPrice,
+  setTotalPrice
 }) {
   const itemClasses = {
     base: "py-0 w-full",
@@ -38,6 +38,9 @@ function AnimeEpisodeListComponent({
     content: "text-small px-2",
   };
   const router = useRouter();
+  useEffect(() => {
+    setTotalPrice(parseInt(groupSelected.length) * 100000);
+  }, [groupSelected.length])
   return (
     <>
       <div className="grid-cols-1 grid gap-4">
@@ -47,7 +50,7 @@ function AnimeEpisodeListComponent({
           <div className="flex flex-row items-center">
             <Button
               className={`h-[50px] w-full md:w-[200px] rounded-md m-0 p-0 font-medium shadow-md bg-gradient-to-r from-violet-500 to-fuchsia-500 transition ease-in-out hover:scale-105 text-sm text-white`}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               <MdHistory className="mr-2" />
               Xem lịch sử đặt
@@ -94,7 +97,7 @@ function AnimeEpisodeListComponent({
           <Label className="font-bold text-sm">
             Chọn tập phim: <span className="text-red-500">*</span>
           </Label>
-          <div className="flex flex-row items-center mb-4 mt-3">
+          {/* <div className="flex flex-row items-center mb-4 mt-3">
             <Input
               className="h-[52px] w-full bg-white"
               variant="bordered"
@@ -108,7 +111,7 @@ function AnimeEpisodeListComponent({
             >
               <MagnifyingGlassIcon className={`h-6 w-6 text-[#3BE1AA]`} />
             </Button>
-          </div>
+          </div> */}
           <Accordion
             showDivider={false}
             className="p-2 flex flex-col gap-1 w-full"
@@ -162,7 +165,7 @@ function AnimeEpisodeListComponent({
           <div className="flex flex-row justify-between mt-6">
             <Label className="font-semibold text-xl">Tổng tiền:</Label>
             <Label className="font-semibold text-xl text-emerald-400">
-              600.000 VND
+              {totalPrice.toLocaleString()} VNĐ
             </Label>
           </div>
         </div>

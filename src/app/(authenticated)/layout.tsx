@@ -97,12 +97,18 @@ export default async function Layout({
       <Header session={session} />
       {/* 28313A */}
       <div className="flex flex-col lg:flex-row items-start justify-between bg-white">
-        <Sidebar
-          session={session}
-          navItems={navItems}
-          title="Navigation"
-          className="w-full lg:basis-1/4 bg-transparent lg:z-10"
-        />
+
+
+        {session.user?.role === "admin" || session.user?.role === "edittor" ? (
+          <Sidebar
+            session={session}
+            navItems={navItems}
+            title="Navigation"
+            className="w-full lg:basis-1/4 bg-transparent lg:z-10"
+          />
+        ) : (
+          <></>
+        )}
         <main className="w-full min-h-screen bg-[#F6F6F6]">{children}</main>
       </div>
       <Footer />

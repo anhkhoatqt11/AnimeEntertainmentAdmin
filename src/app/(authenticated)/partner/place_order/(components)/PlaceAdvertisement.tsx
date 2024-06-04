@@ -15,10 +15,12 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { url } from "inspector";
+import { usePayment } from "@/hooks/usePayment";
 
-export function PlaceAdvertisement() {
+export function PlaceAdvertisement({ session }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { fetchEpisodeToShow, processingOrder } = useAdvertisement();
+  const { createPaymentHistory, uploadVNPAYPaymentInfo } = usePayment();
   const [isLoading, setIsLoading] = useState(true);
   const [videoUrl, setVideoUrl] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
@@ -26,18 +28,13 @@ export function PlaceAdvertisement() {
   const [copyList, setCopyList] = useState([]);
   const [groupSelected, setGroupSelected] = React.useState([]);
   const [searchKey, setSearchKey] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const router = useRouter();
   try {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter") searchSubmit();
     });
-  } catch (except) {}
-  const searchSubmit = () => {
-    setCopyList(
-      animeEpisodeList.filter((item) =>
-        item?.movieName.toLowerCase().includes(searchKey.toLowerCase())
-      )
-    );
-  };
+  } catch (except) { }
   useEffect(() => {
     const fetchEpisode = async () => {
       await fetchEpisodeToShow().then((res) => {
@@ -48,6 +45,7 @@ export function PlaceAdvertisement() {
     };
     fetchEpisode();
   }, []);
+
   const onSubmit = async () => {
     if (!videoUrl || !linkUrl) {
       toast.error("Vui lòng nhập đầy đủ thông tin");
@@ -57,12 +55,39 @@ export function PlaceAdvertisement() {
       toast.error("Vui lòng chọn tối thiểu 3 tập phim");
       return;
     }
+    // const data = {
+    //   episodeList: groupSelected,
+    //   advertisementId: "662629237f8fce0bb6a8d3b4",
+    // };
+    // await processingOrder(data);
     const data = {
+      userId: session.user.id,
+      orderDate: new Date(),
+      paymentMethod: 'VNPay',
+      status: 'pending',
+      price: totalPrice,
+      videoUrl: videoUrl,
+      linkUrl: linkUrl,
       episodeList: groupSelected,
-      advertisementId: "662629237f8fce0bb6a8d3b4",
+    }
+
+    console.log(data);
+
+    const createOrderSuccess = await createPaymentHistory(data);
+
+    const VNPAY = {
+      amount: createOrderSuccess.price,
+      bankCode: "",
+      language: "vn",
+      orderId: createOrderSuccess._id,
     };
-    await processingOrder(data);
+
+
+    const uploadPaymentSuccess = await uploadVNPAYPaymentInfo(VNPAY);
+    router.push(uploadPaymentSuccess.data);
   };
+
+
   return (
     <>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -103,12 +128,12 @@ export function PlaceAdvertisement() {
           setAnimeEpisodeList={setCopyList}
           groupSelected={groupSelected}
           setGroupSelected={setGroupSelected}
-          setSearchKey={setSearchKey}
-          searchSubmit={searchSubmit}
           videoUrl={videoUrl}
           setVideoUrl={setVideoUrl}
           linkUrl={linkUrl}
           setLinkUrl={setLinkUrl}
+          totalPrice={totalPrice}
+          setTotalPrice={setTotalPrice}
         />
         <div className="p-4">
           <Button

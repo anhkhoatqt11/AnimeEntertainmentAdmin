@@ -45,7 +45,7 @@ const Login = ({ className }: { className?: string }) => {
     },
   });
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   async function onSubmit(data) {
     console.log(data);
@@ -68,14 +68,17 @@ const Login = ({ className }: { className?: string }) => {
         setIsLoading(false);
         return;
       }
-    } catch (error) {}
 
-    console.log("success");
-    toast("Đăng nhập thành công", {
-      description: "Bạn đã đăng nhập thành công vào tài khoản của mình",
-    });
-    router.refresh();
-    router.replace("/");
+      console.log("success");
+      toast("Đăng nhập thành công", {
+        description: "Bạn đã đăng nhập thành công vào tài khoản của mình",
+      });
+      console.log(res);
+      router.refresh();
+      router.replace("/");
+    } catch (error) { }
+
+
   }
 
   const handleLogout = async () => {

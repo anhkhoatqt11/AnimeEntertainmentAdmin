@@ -34,7 +34,7 @@ export function AdvertisementManagement() {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter") searchSubmit();
     });
-  } catch (except) {}
+  } catch (except) { }
 
   useEffect(() => {
     const fetchEventDetails = async () => {
