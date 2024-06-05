@@ -47,6 +47,7 @@ export function EditAnime({ animeId }) {
   const [publisher, setPublisher] = React.useState("");
   const [weeklyTime, setWeeklyTime] = React.useState("");
   const [ageFor, setAgeFor] = React.useState(new Set(["10+"]));
+  const [defaultAgeFor, setDefaultAgeFor] = useState("");
   const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
   const [episodeIdList, setEpisodeIdList] = useState([]);
   const [actionType, setActionType] = useState(1);
@@ -67,6 +68,7 @@ export function EditAnime({ animeId }) {
         setPublisher(res[0]?.publisher);
         setWeeklyTime(res[0]?.publishTime);
         setAgeFor(new Set([res[0]?.ageFor]));
+        setDefaultAgeFor(res[0]?.ageFor);
         setEpisodeIdList(res[0]?.episodes);
         res[0]?.episodeList.map((item, index) => {
           episodeCopy.push({
@@ -212,7 +214,7 @@ export function EditAnime({ animeId }) {
       movieName: movieName,
       genres: genreSelected,
       publishTime: weeklyTime,
-      ageFor: ageFor.currentKey,
+      ageFor: ageFor.currentKey || defaultAgeFor,
       publisher: publisher,
       description: description,
       episodes: episodeIdList,

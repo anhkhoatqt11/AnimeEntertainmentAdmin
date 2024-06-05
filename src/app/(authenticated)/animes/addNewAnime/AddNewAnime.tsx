@@ -123,7 +123,7 @@ export function AddNewAnime() {
         movieName: movieName,
         genres: genreSelected,
         publishTime: weeklyTime,
-        ageFor: ageFor.currentKey,
+        ageFor: ageFor.currentKey || "10+",
         publisher: publisher,
         description: description,
         episodes: [],

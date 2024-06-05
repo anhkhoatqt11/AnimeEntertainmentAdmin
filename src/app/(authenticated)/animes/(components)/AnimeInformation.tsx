@@ -198,7 +198,6 @@ function AnimeInformation({ props }) {
             <Select
               variant={"bordered"}
               label="Chọn độ tuổi"
-              defaultSelectedKeys={["10+"]}
               selectedKeys={props.ageFor}
               radius="sm"
               className="w-full md:w-[150px]"

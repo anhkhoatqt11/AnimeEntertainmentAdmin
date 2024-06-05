@@ -116,24 +116,28 @@ export default function UserTable() {
         return (
           <User
             avatarProps={{
-              src: report.userReportedInfo[0].avatar,
+              src:
+                report.userReportedInfo[0]?.avatar ||
+                "https://i.pinimg.com/originals/5c/62/90/5c6290cc2fc59b6ff13a47b214a98046.jpg",
             }}
-            description={report.userReportedInfo[0]._id}
-            name={report.userReportedInfo[0].username}
+            description={report.userReportedInfo[0]?._id}
+            name={report.userReportedInfo[0]?.username}
           >
-            {report.userReportedInfo[0].username}
+            {report.userReportedInfo[0]?.username}
           </User>
         );
       case "reported":
         return (
           <User
             avatarProps={{
-              src: report.userBeReportedInfo[0].avatar,
+              src:
+                report.userBeReportedInfo[0]?.avatar ||
+                "https://i.pinimg.com/originals/5c/62/90/5c6290cc2fc59b6ff13a47b214a98046.jpg",
             }}
-            description={report.userBeReportedInfo[0]._id}
-            name={report.userBeReportedInfo[0].username}
+            description={report.userBeReportedInfo[0]?._id}
+            name={report.userBeReportedInfo[0]?.username}
           >
-            {report.userBeReportedInfo[0].username}
+            {report.userBeReportedInfo[0]?.username}
           </User>
         );
       case "content":

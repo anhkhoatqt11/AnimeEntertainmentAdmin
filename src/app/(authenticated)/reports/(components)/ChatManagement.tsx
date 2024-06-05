@@ -24,6 +24,7 @@ export function ChatManagement({ reportId }) {
     setIsLoaded(false);
     var result = await fetchReportDetail(reportId);
     setDetailReport(result[0]);
+    console.log(result[0]);
     setIsLoaded(true);
   };
   const onCompletedReport = async (reportId) => {
@@ -86,7 +87,10 @@ export function ChatManagement({ reportId }) {
             </div>
           </div>
           <div className="mt-6 bg-white shadow rounded-lg p-6">
-            {detailReport?.chapterInformation[0]?.comments.map((item) => (
+            {(detailReport?.type === "comic"
+              ? detailReport?.chapterInformation[0]?.comments
+              : detailReport?.episodeInformation[0]?.comments
+            ).map((item) => (
               <div>
                 <div
                   className="flex flex-row gap-3 items-center my-6"
