@@ -341,7 +341,7 @@ function ComicChapterInformation({ props }) {
                   variant="bordered"
                   size="md"
                   value={unlockPrice}
-                  placeholder="Nhập tên tập truyện"
+                  placeholder="Nhập giá unlock chương"
                   onChange={(e) => {
                     setUnlockPrice(e.target.value);
                   }}

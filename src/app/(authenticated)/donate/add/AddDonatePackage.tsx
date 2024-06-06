@@ -75,7 +75,7 @@ export function AddDonatePackage({ }) {
       title: title,
       subtitle: subTitle,
       coin: coin,
-      mediaUrl:
+      coverImage:
         DonatePackageMediaImage != "" ? DonatePackageMediaImage : defaultdonatePackageImage,
     };
     await addDonatePackage(data).then((res) => {
@@ -206,7 +206,7 @@ export function AddDonatePackage({ }) {
                   value={coin}
                   placeholder="Nhập số coin"
                   onChange={(e) => {
-                    setCoin(parseInt(e.target.value));
+                    setCoin(e.target.value);
                   }}
                 />
               </div>
