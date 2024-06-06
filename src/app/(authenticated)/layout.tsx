@@ -74,11 +74,6 @@ export default async function Layout({
       icon: <LucideGamepad size={15} className="mr-2" />,
     },
     {
-      title: "Quảng cáo",
-      value: "advertisement",
-      icon: <Megaphone size={15} className="mr-2" />,
-    },
-    {
       title: "Gửi thông báo",
       value: "notification",
       icon: <Bell size={15} className="mr-2" />,

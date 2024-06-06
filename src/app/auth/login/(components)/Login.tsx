@@ -37,7 +37,6 @@ const Login = ({ className }: { className?: string }) => {
   const [show, setShow] = React.useState({
     showPass: false,
   });
-
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       loginid: "",
@@ -75,6 +74,9 @@ const Login = ({ className }: { className?: string }) => {
       });
       console.log(res);
       router.refresh();
+
+
+
       router.replace("/");
     } catch (error) { }
 

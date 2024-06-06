@@ -134,6 +134,7 @@ export function PlaceAdvertisement({ session }) {
           setLinkUrl={setLinkUrl}
           totalPrice={totalPrice}
           setTotalPrice={setTotalPrice}
+          session={session}
         />
         <div className="p-4">
           <Button

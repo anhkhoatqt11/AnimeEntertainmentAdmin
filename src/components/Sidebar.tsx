@@ -208,13 +208,17 @@ export const Sidebar = React.forwardRef<SidebarElement, Readonly<SidebarProps>>(
     const filteredNavItems = navItems.filter(item => {
       if (role === 'Admin') return true;
       if (role === 'Editor') {
-        return ['' ,'animes', 'comics', 'challenge', 'album'].includes(item.value);
+        return ['animes', 'comics', 'challenge', 'album'].includes(item.value);
       }
       if (['Advertiser', 'Partner'].includes(role)) {
-        return item.value === 'advertisement';
+        return false;
       }
       return false;
     });
+
+    if (role === 'Advertiser') {
+      return;
+    }
 
     return (
       <aside

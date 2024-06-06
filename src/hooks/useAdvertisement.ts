@@ -51,12 +51,20 @@ export const useAdvertisement = () => {
     return res;
   };
 
+  const fetchOrder = async (id) => {
+    const res = await getRequest({
+      endPoint: `/api/advertisements/history?id=${id}`
+    });
+    return res;
+  }
+
   return {
     fetchAllAdvertisement,
     fetchEpisodeToShow,
     createAdvertisement,
     editAdvertisement,
     processingOrder,
+    fetchOrder,
     test,
   };
 };
