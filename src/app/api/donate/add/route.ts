@@ -7,9 +7,9 @@ export async function POST(req: Request) {
 
     const donates = DonatePackage.create({
         title: body.title,
-        subtitle: body.subtitle,
+        subTitle: body.subtitle,
         coin: body.coin,
-        mediaUrl: body.mediaUrl,
+        coverImage: body.coverImage,
         donateRecords: new mongoose.Types.Array(),
     })
 

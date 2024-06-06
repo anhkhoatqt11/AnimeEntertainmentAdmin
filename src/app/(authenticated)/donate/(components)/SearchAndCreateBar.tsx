@@ -39,7 +39,7 @@ export function SearchAndCreateBar({ setSearchWord, setIsLoaded }) {
             <Button
                 className={`h-[50px] w-full md:w-[200px] rounded-md m-0 p-0 font-medium shadow-md bg-gradient-to-r from-violet-500 to-fuchsia-500 transition ease-in-out hover:scale-105 text-sm text-white`}
                 onClick={() => {
-                    router.push("/animes/addNewAnime");
+                    router.push("/donate/add");
                 }}
             >
                 <BiBookAdd className="mr-2" />

@@ -8,6 +8,20 @@ export const useDonates = () => {
     return res;
   };
 
+  const fetchDonatePackageById = async (id) => {
+    const res = await getRequest({
+      endPoint: `/api/donate/detail?id=${id}`,
+    });
+    return res;
+  }
+
+  const fetchDonatorById = async (id) => {
+    const res = await getRequest({
+      endPoint: `/api/donate/donator?id=${id}`
+    });
+    return res;
+  }
+
   const addDonatePackage = async (data) => {
     const res = await postRequest({
       endPoint: "/api/donate/add",
@@ -17,11 +31,20 @@ export const useDonates = () => {
     return res;
   };
 
-  const updateDonatePackage = async (data) => {};
+  const updateDonatePackage = async (data) => {
+    const res = await postRequest({
+      endPoint: "/api/donate/edit",
+      isFormData: false,
+      formData: data,
+    });
+    return res;
+  };
 
   return {
     fetchAllDonatePackage,
     addDonatePackage,
+    fetchDonatePackageById,
+    fetchDonatorById,
     updateDonatePackage,
   };
 };
