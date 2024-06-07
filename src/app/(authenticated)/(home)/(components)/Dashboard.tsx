@@ -1,7 +1,11 @@
 "use client";
 
 import { MdMovieFilter, MdOutlineShowChart } from "react-icons/md";
-import { IoPodium, IoTrendingDownOutline, IoTrendingUpOutline } from "react-icons/io5";
+import {
+  IoPodium,
+  IoTrendingDownOutline,
+  IoTrendingUpOutline,
+} from "react-icons/io5";
 import { BiSolidDownArrow, BiSolidUpArrow } from "react-icons/bi";
 import { FaBookQuran } from "react-icons/fa6";
 import { RiAdvertisementFill } from "react-icons/ri";
@@ -66,7 +70,7 @@ export function Dashboard() {
           {
             label: "Doanh thu thanh toán",
             data: dashboardData.revenue,
-            borderColor: "rgb(54, 162, 235)",
+            borderColor: "rgb(59, 228, 146)",
             fill: false,
             tension: 0.4,
           },
@@ -82,10 +86,7 @@ export function Dashboard() {
               dashboardData.adsRevenue.reduce((acc, val) => acc + val, 0),
               dashboardData.revenue.reduce((acc, val) => acc + val, 0),
             ],
-            backgroundColor: [
-              "rgb(255, 99, 132)",
-              "rgb(54, 162, 235)",
-            ],
+            backgroundColor: ["rgb(255, 99, 132)", "rgb(59, 228, 146)"],
             borderColor: "white",
             borderWidth: 2,
           },
@@ -100,10 +101,7 @@ export function Dashboard() {
       {
         label: "Tổng thu",
         data: [0, 0],
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-        ],
+        backgroundColor: ["rgb(255, 99, 132)", "rgb(59, 228, 146)"],
         borderColor: "white",
         borderWidth: 2,
       },
@@ -123,7 +121,7 @@ export function Dashboard() {
       {
         label: "Doanh thu thanh toán",
         data: [],
-        borderColor: "rgb(54, 162, 235)",
+        borderColor: "rgb(59, 228, 146)",
         fill: false,
         tension: 0.4,
       },
@@ -147,11 +145,13 @@ export function Dashboard() {
                 <IoPodium className="text-blue-500 w-8 h-8" />
               </div>
               <div className="mt-6 flex flex-row gap-2 items-end">
-                <div className="font-semibold text-[24px]">
+                <div className="font-semibold text-[20px]">
                   {dashboardData?.comicCount || 0}
                 </div>
               </div>
-              <div className="text-gray-500 text-sm">Số lượng truyện phát hành</div>
+              <div className="text-gray-500 text-sm">
+                Số lượng truyện phát hành
+              </div>
             </div>
             <div className="bg-white rounded-[16px] shadow h-fit p-6">
               <div className="flex flex-row justify-between items-center">
@@ -161,24 +161,39 @@ export function Dashboard() {
                 <IoPodium className="text-emerald-400 w-8 h-8" />
               </div>
               <div className="mt-6 flex flex-row gap-2 items-end">
-                <div className="font-semibold text-[24px]">
+                <div className="font-semibold text-[20px]">
                   {dashboardData?.animeCount || 0}
                 </div>
               </div>
-              <div className="text-gray-500 text-sm">Số lượng anime phát hành</div>
+              <div className="text-gray-500 text-sm">
+                Số lượng anime phát hành
+              </div>
             </div>
             <div className="bg-white rounded-[16px] shadow h-fit p-6">
               <div className="flex flex-row justify-between items-center">
                 <div className="rounded-full bg-fuchsia-500/5 border-1 border-fuchsia-500 h-10 w-10 flex justify-center items-center">
                   <RiAdvertisementFill className="text-fuchsia-500 w-6 h-6" />
                 </div>
-                {parseFloat(dashboardData?.adsRevenueGrowth) < 0 ? <><IoTrendingDownOutline className="text-fuchsia-500 w-8 h-8" /> </> : <><IoTrendingUpOutline className="text-fuchsia-500 w-8 h-8" /> </>}
+                {parseFloat(dashboardData?.adsRevenueGrowth) < 0 ? (
+                  <>
+                    <IoTrendingDownOutline className="text-fuchsia-500 w-8 h-8" />{" "}
+                  </>
+                ) : (
+                  <>
+                    <IoTrendingUpOutline className="text-fuchsia-500 w-8 h-8" />{" "}
+                  </>
+                )}
               </div>
               <div className="mt-6 flex flex-row gap-2 items-end">
-                <div className="font-semibold text-[24px]">
-                  {dashboardData?.adsRevenueCurrentMonth.toLocaleString() || 0} VNĐ
+                <div className="font-semibold text-[20px]">
+                  {dashboardData?.adsRevenueCurrentMonth.toLocaleString() || 0}{" "}
+                  $
                 </div>
-                {parseFloat(dashboardData?.adsRevenueGrowth) < 0 ? <BiSolidDownArrow className="text-red-500 w-3 h-3 mb-2" /> : <BiSolidUpArrow className="text-emerald-400 w-3 h-3 mb-2" />}
+                {parseFloat(dashboardData?.adsRevenueGrowth) < 0 ? (
+                  <BiSolidDownArrow className="text-red-500 w-3 h-3 mb-2" />
+                ) : (
+                  <BiSolidUpArrow className="text-emerald-400 w-3 h-3 mb-2" />
+                )}
                 <div className="text-[12px] mb-1">
                   {dashboardData?.adsRevenueGrowth}%
                 </div>
@@ -190,13 +205,25 @@ export function Dashboard() {
                 <div className="rounded-full bg-yellow-400/5 border-1 border-yellow-400 h-10 w-10 flex justify-center items-center">
                   <FaCoins className="text-yellow-400 w-6 h-6" />
                 </div>
-                {parseFloat(dashboardData?.revenueGrowth) < 0 ? <><IoTrendingDownOutline className="text-yellow-400 w-8 h-8" /> </> : <><IoTrendingUpOutline className="text-yellow-400 w-8 h-8" /></>}
+                {parseFloat(dashboardData?.revenueGrowth) < 0 ? (
+                  <>
+                    <IoTrendingDownOutline className="text-yellow-400 w-8 h-8" />{" "}
+                  </>
+                ) : (
+                  <>
+                    <IoTrendingUpOutline className="text-yellow-400 w-8 h-8" />
+                  </>
+                )}
               </div>
               <div className="mt-6 flex flex-row gap-2 items-end">
-                <div className="font-semibold text-[24px]">
-                  {dashboardData?.revenueCurrentMonth.toLocaleString() || 0} VNĐ
+                <div className="font-semibold text-[20px]">
+                  {dashboardData?.revenueCurrentMonth.toLocaleString() || 0} $
                 </div>
-                {parseFloat(dashboardData?.revenueGrowth) < 0 ? <BiSolidDownArrow className="text-red-500 w-3 h-3 mb-2" /> : <BiSolidUpArrow className="text-emerald-400 w-3 h-3 mb-2" />}
+                {parseFloat(dashboardData?.revenueGrowth) < 0 ? (
+                  <BiSolidDownArrow className="text-red-500 w-3 h-3 mb-2" />
+                ) : (
+                  <BiSolidUpArrow className="text-emerald-400 w-3 h-3 mb-2" />
+                )}
                 <div className="text-[12px] mb-1">
                   {dashboardData?.revenueGrowth}%
                 </div>
