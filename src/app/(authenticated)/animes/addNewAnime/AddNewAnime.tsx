@@ -40,7 +40,7 @@ export function AddNewAnime() {
   const [genreSelected, setGenreSelected] = React.useState([]);
   const [publisher, setPublisher] = React.useState("");
   const [weeklyTime, setWeeklyTime] = React.useState("");
-  const [ageFor, setAgeFor] = React.useState(new Set(["10+"]));
+  const [ageFor, setAgeFor] = React.useState(new Set([]));
   const [episodeList, setEpisodeList] = useState<AnimeEp[]>([]);
   const [episodeIdList, setEpisodeIdList] = useState([]);
   const { startUpload } = useUploadThing("imageUploader");
@@ -59,6 +59,10 @@ export function AddNewAnime() {
     }
     if (genreSelected.length <= 0 || genreSelected.length > 3) {
       toast.error("Phải có tối thiểu 1 thể loại phim và tối đa 3 thể loại");
+      return;
+    }
+    if (ageFor.currentKey === "") {
+      toast.error("Vui lòng chọn độ tuổi phù hợp");
       return;
     }
     setIsLoading(true);

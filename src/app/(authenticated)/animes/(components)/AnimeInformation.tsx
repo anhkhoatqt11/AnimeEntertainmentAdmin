@@ -202,6 +202,7 @@ function AnimeInformation({ props }) {
               radius="sm"
               className="w-full md:w-[150px]"
               onSelectionChange={props.setAgeFor}
+              placeholder="Chọn độ tuổi"
             >
               {ageList.map((item) => (
                 <SelectItem key={item} value={item}>

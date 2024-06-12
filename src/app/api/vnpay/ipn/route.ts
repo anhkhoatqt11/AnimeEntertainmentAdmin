@@ -51,6 +51,8 @@ export async function GET(req: Request) {
                     ...body,
                 });
 
+                console.log(ad);
+
                 const idList: mongoose.Types.ObjectId[] = [];
                 PaymentHistoryData.episodeList.map((item) => {
                     idList.push(new mongoose.Types.ObjectId(item));
@@ -60,7 +62,7 @@ export async function GET(req: Request) {
                     { _id: { $in: idList } },
                     {
                         $set: {
-                            advertisement: new mongoose.Types.ObjectId(PaymentHistoryData.advertisementId),
+                            advertisement: new mongoose.Types.ObjectId(ad._id),
                         },
                     }
                 );

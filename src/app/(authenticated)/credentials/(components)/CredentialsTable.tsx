@@ -50,7 +50,7 @@ const statusColorMap = {
 
 const statusMap = {
   active: "Đang hoạt động",
-  deactivated: "Vô hiệu hoá",
+  deactivate: "Vô hiệu hoá",
 };
 
 const INITIAL_VISIBLE_COLUMNS = ["username", "id", "status", "role", "actions"];
@@ -75,11 +75,20 @@ export default function CredentialsTable() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const roles = [
-    { key: "Admin", label: "Admin (Quản trị viên)" },
-    { key: "Editor", label: "Editor (Biên tập viên)" },
-    { Key: "Partner", label: "Partner (Đối tác)" },
-    { key: "Advertiser", label: "Advertiser (Nhà quảng cáo)" },
+    { value: "Admin", label: "Admin (Quản trị viên)" },
+    { value: "Editor", label: "Editor (Biên tập viên)" },
+    { value: "Partner", label: "Partner (Đối tác)" },
+    { value: "Advertiser", label: "Advertiser (Nhà quảng cáo)" },
   ];
+
+
+  function removeCommasAndSpaces(inputString: string): string {
+    // Replace commas with empty string
+    let noCommas = inputString.replace(/,/g, '');
+    // Replace spaces with empty string
+    let result = noCommas.replace(/ /g, '');
+    return result;
+  }
 
   const { fetchAllCredentials, updateCredentials } = useCredentials();
 
@@ -114,13 +123,36 @@ export default function CredentialsTable() {
   }, [visibleColumns]);
 
   const handleSelectionChange = (e) => {
-    setRole(e.target.value);
+    setRole(e.target.value.split(",").map((role) => role.trim()));
   };
 
   const onSubmit = async () => {
+    console.log(role[0]);
+    console.log(userName);
     const data = {
+      id: currentUserId,
       username: userName,
-      role: role,
+      role: role[0],
+    };
+    const res = await updateCredentials(data);
+    if (res) {
+      console.log("Cập nhật thành công");
+      toast.success("Cập nhật thành công");
+      refetch();
+    } else {
+      console.log("Cập nhật thất bại");
+      toast.error("Đã có lỗi xảy ra khi thực hiện cập nhật");
+    }
+  };
+
+
+  const onSubmitStatus = async ({ status, userId }) => {
+    console.log(userId, status);
+    const data = {
+      id: userId,
+      username: "",
+      role: "",
+      status: status,
     };
     const res = await updateCredentials(data);
     if (res) {
@@ -176,22 +208,24 @@ export default function CredentialsTable() {
                       onClick={() => {
                         setUserName(user.username);
                         setCurrentUserId(user._id);
-                        setRole(user.role);
+                        setRole(user.role.split(",").map((role) => role.trim()));
                         onOpen();
                       }}
                     />
                   </span>
                 </Tooltip>
-                {user.status === "Deactivate" ? (
+                {user.status === "deactivate" ? (
                   <Tooltip color="primary" content="Kích hoạt tài khoản">
                     <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                      <CiUnlock className="w-6 h-6 text-emerald-400" />
+                      <CiUnlock className="w-6 h-6 text-emerald-400" onClick={() => {
+                        onSubmitStatus({ userId: user._id, status: "active" });
+                      }} />
                     </span>
                   </Tooltip>
                 ) : (
                   <Tooltip color="danger" content="Vô hiệu hoá">
                     <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                      <CiLock className="w-6 h-6 text-red-400" />
+                      <CiLock className="w-6 h-6 text-red-400" onClick={() => { onSubmitStatus({ userId: user._id, status: "deactivate" }); }} />
                     </span>
                   </Tooltip>
                 )}
@@ -397,7 +431,7 @@ export default function CredentialsTable() {
               {(onClose) => (
                 <>
                   <ModalHeader className="flex flex-col gap-1">
-                    Tạo tài khoản
+                    Chỉnh sửa tài khoản
                   </ModalHeader>
                   <ModalBody>
                     <Input
@@ -412,10 +446,10 @@ export default function CredentialsTable() {
                       onChange={handleSelectionChange}
                       label="Vai trò"
                       className="w-full"
-                      selectedKeys={"Admin"}
+                      selectedKeys={role}
                     >
                       {roles.map((role) => (
-                        <SelectItem key={role.key}>{role.label}</SelectItem>
+                        <SelectItem key={role.value}>{role.label}</SelectItem>
                       ))}
                     </Select>
                   </ModalBody>

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       userId: item._id.toString(),
     };
     const res = await postRequest({
-      endPoint: "http://192.168.137.1:5000/api/users/sendPushNoti",
+      endPoint: "https://skylark-entertainment-1v0l91qho-son-dangs-projects.vercel.app/api/users/sendPushNoti",
       isFormData: false,
       formData: data,
     });

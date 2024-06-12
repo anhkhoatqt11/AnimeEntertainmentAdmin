@@ -51,8 +51,8 @@ export function PlaceAdvertisement({ session }) {
       toast.error("Vui lòng nhập đầy đủ thông tin");
       return;
     }
-    if (groupSelected.length < 3) {
-      toast.error("Vui lòng chọn tối thiểu 3 tập phim");
+    if (groupSelected.length < 0) {
+      toast.error("Vui lòng chọn tối thiểu 1 tập phim");
       return;
     }
     // const data = {
