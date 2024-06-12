@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
 import AdvertisementsModel from "../../../../model/advertisements";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
+  connectMongoDB();
   const ad = await AdvertisementsModel.aggregate([
     {
       $lookup: {

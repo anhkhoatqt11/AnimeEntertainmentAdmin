@@ -1,7 +1,8 @@
 import BannerModel from "../../../model/banners"
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
-
+    connectMongoDB();
     const bannerList = await BannerModel.aggregate([
         {
             $lookup: {

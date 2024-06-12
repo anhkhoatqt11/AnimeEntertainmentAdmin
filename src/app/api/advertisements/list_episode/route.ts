@@ -2,8 +2,11 @@ import prisma from "@/lib/prisma";
 import AnimesModel from "../../../../model/animes";
 import AnimeEpisodesModel from "../../../../model/animeepisodes";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
+
 
 export async function GET(request: Request) {
+  connectMongoDB();
   const episodes = await AnimeEpisodesModel.aggregate([
     {
       $match: {

@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
 import ComicChapterModel from "../../../../model/comicChapter";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
+  connectMongoDB();
   const comics = await ComicChapterModel.aggregate([
     {
       $lookup: {

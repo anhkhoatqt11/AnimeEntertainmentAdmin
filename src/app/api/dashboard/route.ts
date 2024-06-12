@@ -3,8 +3,10 @@ import ComicsModel from "../../../model/comics";
 import AnimeEpisode from "@/model/animeepisodes";
 import AdvertisementPortalHistory from "@/model/advertisementsportalhistories";
 import PaymentHistory from "@/model/paymenthistories";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
+    connectMongoDB();
     const now = new Date();
     const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
