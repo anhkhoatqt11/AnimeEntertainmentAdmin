@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
 import AnimesModel from "../../../../../model/animes";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
+
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
   const idList: mongoose.Types.ObjectId[] = [];
   const genreList: mongoose.Types.ObjectId[] = [];

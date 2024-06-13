@@ -1,7 +1,10 @@
 import UserModel from '@/model/users';
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
     try {
+        // Connect to MongoDB
+        await connectMongoDB();
         // Fetch all users
         const users = await UserModel.find({});
 

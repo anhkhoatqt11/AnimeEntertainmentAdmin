@@ -1,8 +1,11 @@
 import prisma from "@/lib/prisma";
 import AnimesModel from "../../../model/animes";
 import { removeVietnameseTones } from "@/lib/utils";
+import connectMongoDB from "@/lib/mongodb";
+
 
 export async function GET(request: Request) {
+  await connectMongoDB();
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const page = parseInt(searchParams?.get("page")); // Retrieves the value of the 'skip' parameter

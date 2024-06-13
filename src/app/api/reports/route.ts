@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
 import UserReportModel from "../../../model/userReports";
 import { statusOptions } from "@/app/(authenticated)/(home)/(components)/data/data";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
+  await connectMongoDB();
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const page = parseInt(searchParams?.get("page"));

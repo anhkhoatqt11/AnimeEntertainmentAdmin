@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
 import ChallengesModel from "@/model/challenges";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
+
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
 
   const question = await ChallengesModel.updateMany(

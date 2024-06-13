@@ -1,7 +1,9 @@
 import DonatePackage from "@/model/donatepackages";
+import connectMongoDB from "@/lib/mongodb";
 
 
 export async function POST(req: Request) {
+    await connectMongoDB();
     const body = await req.json();
 
     var donate = await DonatePackage.findById(body.packageId);

@@ -2,7 +2,10 @@ import prisma from "@/lib/prisma";
 import ComicChapterModel from "../../../../../model/comicChapter";
 import AnimeEpisodeModel from "../../../../../model/animeepisodes";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
+
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
   const destinationId = body.destinationId;
   const parentCommentId = body.parentCommentId;

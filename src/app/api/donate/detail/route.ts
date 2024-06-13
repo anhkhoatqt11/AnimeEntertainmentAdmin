@@ -1,10 +1,11 @@
 import DonatePackage from "@/model/donatepackages";
+import connectMongoDB from "@/lib/mongodb";
 
 
 export async function GET(request: Request) {
 
     try {
-
+        await connectMongoDB();
         const url = new URL(request.url);
         const searchParams = new URLSearchParams(url.search);
         const id = searchParams?.get("id");

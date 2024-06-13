@@ -3,8 +3,10 @@ import UserReportModel from "../../../../model/userReports";
 import ComicChapterModel from "../../../../model/comicChapter";
 import AnimeEpisodeModel from "../../../../model/animeepisodes";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
+  await connectMongoDB();
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const reportId = searchParams?.get("reportId");

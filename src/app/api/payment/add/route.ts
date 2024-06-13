@@ -1,6 +1,8 @@
 import AdvertisementsPortalHistory from "@/model/advertisementsportalhistories";
+import connectMongoDB from "@/lib/mongodb";
 
 export async function POST(req: Request) {
+    await connectMongoDB();
     const body = await req.json();
 
     console.log(body);

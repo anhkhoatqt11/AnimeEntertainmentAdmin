@@ -2,7 +2,10 @@ import prisma from "@/lib/prisma";
 import UsersModel from "../../../../model/users";
 import mongoose from "mongoose";
 import { postRequest } from "@/lib/fetch";
+import connectMongoDB from "@/lib/mongodb";
+
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
 
   const users = await UsersModel.updateMany(
@@ -28,9 +31,8 @@ export async function POST(req: Request) {
   const allUsers = await UsersModel.find();
   allUsers.forEach(async (item) => {
     const data = {
-      title: `Ping pong. ${
-        body.type === "chapter" ? "Chương mới đã ra mắt" : "Tập mới đã ra mắt"
-      }`,
+      title: `Ping pong. ${body.type === "chapter" ? "Chương mới đã ra mắt" : "Tập mới đã ra mắt"
+        }`,
       body: body.content,
       userId: item._id.toString(),
     };

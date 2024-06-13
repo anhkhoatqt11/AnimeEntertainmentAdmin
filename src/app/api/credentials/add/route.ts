@@ -2,6 +2,7 @@ import connectMongoDB from "@/lib/mongodb";
 import CredentialsModel from "@/model/credentials";
 import bcrypt from "bcryptjs";
 
+
 export async function POST(request: Request) {
   try {
     const { username, loginid, password, role, status } = await request.json();

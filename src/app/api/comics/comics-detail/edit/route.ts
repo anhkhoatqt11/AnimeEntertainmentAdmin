@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
 import ComicsModel from "../../../../../model/comics";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
   var comic = await ComicsModel.findById(body.comicId);
   if (!comic) {

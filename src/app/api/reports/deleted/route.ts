@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
 import ReportModel from "../../../../model/userReports";
 import mongoose from "mongoose";
+import connectMongoDB from "@/lib/mongodb";
+
 export async function POST(req: Request) {
+  await connectMongoDB();
   const body = await req.json();
   const idList: mongoose.Types.ObjectId[] = [];
   body.reportList.map((item) => {
