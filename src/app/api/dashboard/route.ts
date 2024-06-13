@@ -6,7 +6,7 @@ import PaymentHistory from "@/model/paymenthistories";
 import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
-    connectMongoDB();
+    await connectMongoDB();
     const now = new Date();
     const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);

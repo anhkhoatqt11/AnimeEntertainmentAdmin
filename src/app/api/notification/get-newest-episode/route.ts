@@ -3,7 +3,7 @@ import AnimeEpisodeModel from "../../../../model/animeepisodes";
 import connectMongoDB from "@/lib/mongodb";
 
 export async function GET(request: Request) {
-  connectMongoDB();
+  await connectMongoDB();
   const comics = await AnimeEpisodeModel.aggregate([
     {
       $lookup: {

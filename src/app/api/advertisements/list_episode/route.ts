@@ -6,7 +6,7 @@ import connectMongoDB from "@/lib/mongodb";
 
 
 export async function GET(request: Request) {
-  connectMongoDB();
+  await connectMongoDB();
   const episodes = await AnimeEpisodesModel.aggregate([
     {
       $match: {
